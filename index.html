@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css"/>
 	<link rel="stylesheet" href="/assets/styles/style.css"/>
 </head>
-<body>
+<body ng-controller="HomepageController">
 
 	<nav class="navbar navbar-default">
 		<div class="container">
@@ -21,8 +21,7 @@
 			</div>
 			<div id="navbar" class="navbar-collapse collapse navbar-right">
 				<ul class="nav navbar-nav">
-					<li><a href="#/">Home</a></li>
-					<li><a href="#/about">About</a></li>
+					<li><a href="javascript:;" ng-click="setCredentials();">Connect</a></li>
 				</ul>
 			</div><!--/.nav-collapse -->
 		</div>

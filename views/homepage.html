@@ -1,23 +1,25 @@
-<h1>Homepage</h1>
-<br/>
-<a href="#" class="btn btn-success" ng-click="open()" tooltip="Super easy!">Open Modal</a>
-<br/>
-<br/>
-<alert ng-if="selected.fruit" type="info" close="selected.fruit = false">{{selected.fruit}}</alert>
-
-
-<script type="text/ng-template" id="myModalContent.html">
+<script type="text/ng-template" id="setCredentials.html">
 	<div class="modal-header">
-		<h3 class="modal-title">Select Fruit</h3>
+		<h3 class="modal-title">SVN Connect</h3>
 	</div>
 	<div class="modal-body">
-		<span class="btn-group">
-			<a ng-repeat="item in items" ng-click="selected.item = item"
-			   class="btn {{item == selected.item ? 'btn-primary' : 'btn-default' }}">{{ item }}</a>
-		</span>
+		<form>
+			<div class="form-group">
+				<label for="hostname">Host</label>
+				<input type="text" class="form-control" id="hostname" ng-model="hostname" placeholder="11.22.33.44">
+			</div>
+			<div class="form-group">
+				<label for="login">Login</label>
+				<input type="text" class="form-control" id="login" ng-model="login" placeholder="jon_snow">
+			</div>
+			<div class="form-group">
+				<label for="password">Password</label>
+				<input type="password" class="form-control" id="password" ng-model="password" placeholder="w1Nt3rF^l1">
+			</div>
+		</form>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-success" ng-click="ok()">OK</button>
-		<button class="btn btn-default" ng-click="cancel()">Cancel</button>
+		<button class="btn btn-success" ng-click="setCredentialsOk()">OK</button>
+		<button class="btn btn-default" ng-click="setCredentialsCancel()">Cancel</button>
 	</div>
 </script>

@@ -1,6 +1,49 @@
 webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $modal){
 	$scope.items = ["Apple", "Orange", "Blueberry"];
 
+	// set the default credentials
+	$scope.credentials = {
+		hostname: 'greg',
+		login: '',
+		password: ''
+	}; 
+	
+	$scope.setCredentials = function() {
+		$modal.open({
+			templateUrl: 'setCredentials.html',
+			resolve: {
+				credentials: function() {
+					return $scope.credentials;
+				}
+			},
+			controller: ['$scope', '$modalInstance', 'credentials', 
+				function($scope, $modalInstance, credentials) {
+					// take the data from the main controller
+					$scope.hostname = credentials.hostname;
+					$scope.login = credentials.login;
+					$scope.password = credentials.password;
+
+					// define callbacks functions for the buttons
+					$scope.setCredentialsOk = function() {
+						$modalInstance.close({
+							hostname: $scope.hostname,
+							login: $scope.login,
+							password: $scope.password 
+						});
+					};
+					$scope.setCredentialsCancel = function() {
+						$modalInstance.dismiss();
+					};
+				}
+			],
+			size: 'sm'
+		}).result.then(function(res) {
+			$scope.credentials = res;
+		}, function() {
+			// cancel clicked
+		});
+	};
+
 	$scope.open = function(){
 		$modal.open({
 			templateUrl: 'myModalContent.html',

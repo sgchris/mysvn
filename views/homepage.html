@@ -5,8 +5,8 @@
 	<div class="modal-body">
 		<form>
 			<div class="form-group">
-				<label for="hostname">Host</label>
-				<input type="text" class="form-control" id="hostname" ng-model="hostname" placeholder="11.22.33.44">
+				<label for="svnurl">SVN URL</label>
+				<input type="text" class="form-control" id="svnurl" ng-model="svnurl" placeholder="http://my-svn/repo/path">
 			</div>
 			<div class="form-group">
 				<label for="login">Login</label>
@@ -19,7 +19,7 @@
 		</form>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-success" ng-click="setCredentialsOk()">OK</button>
+		<button class="btn btn-success" ng-click="setCredentialsOk()" ng-disabled="checkingConnection == true">OK</button>
 		<button class="btn btn-default" ng-click="setCredentialsCancel()">Cancel</button>
 	</div>
 </script>

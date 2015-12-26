@@ -1,9 +1,9 @@
 webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $modal){
 	$scope.items = ["Apple", "Orange", "Blueberry"];
 
-	// set the default credentials
-	$scope.credentials = {
-		hostname: 'greg',
+	// set the default connection
+	$scope.connection = {
+		svnurl: '',
 		login: '',
 		password: ''
 	}; 
@@ -12,24 +12,41 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 		$modal.open({
 			templateUrl: 'setCredentials.html',
 			resolve: {
-				credentials: function() {
-					return $scope.credentials;
+				connection: function() {
+					return $scope.connection;
 				}
 			},
-			controller: ['$scope', '$modalInstance', 'credentials', 
-				function($scope, $modalInstance, credentials) {
+			controller: ['$scope', '$modalInstance', 'connection', '$http',
+				function($scope, $modalInstance, connection, $http) {
 					// take the data from the main controller
-					$scope.hostname = credentials.hostname;
-					$scope.login = credentials.login;
-					$scope.password = credentials.password;
+					$scope.svnurl = connection.svnurl;
+					$scope.login = connection.login;
+					$scope.password = connection.password;
+					
+					$scope.checkingConnection = false;
 
 					// define callbacks functions for the buttons
 					$scope.setCredentialsOk = function() {
-						$modalInstance.close({
-							hostname: $scope.hostname,
-							login: $scope.login,
-							password: $scope.password 
-						});
+						$scope.checkingConnection = false;
+						$http({
+							method: 'POST',
+							url: BASE_PATH + 'api/check_connection.php',
+							data: {
+								svnurl: $scope.svnurl,
+								login: $scope.login,
+								password: $scope.password,
+							}
+						}).then(function(res) {
+							console.log('connection result: ', res);
+							
+							$modalInstance.close({
+								svnurl: $scope.svnurl,
+								login: $scope.login,
+								password: $scope.password 
+							});
+						}, function() {
+							console.error('check connection failure');
+						})
 					};
 					$scope.setCredentialsCancel = function() {
 						$modalInstance.dismiss();
@@ -38,7 +55,7 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 			],
 			size: 'sm'
 		}).result.then(function(res) {
-			$scope.credentials = res;
+			$scope.connection = res;
 		}, function() {
 			// cancel clicked
 		});

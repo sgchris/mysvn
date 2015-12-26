@@ -3,10 +3,17 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 
 	// set the default connection
 	$scope.connection = {
-		svnurl: '',
-		login: '',
-		password: ''
+		svnurl: 'https://subversion.assembla.com/svn/mysvn-sgchris-1/trunk',
+		login: 'sgchris_yahoo',
+		password: 'shniWatNeOd3'
 	}; 
+	$scope.isConnected = false;
+	
+	// list files
+	$scope.listFiles = [{
+		name:'greg',
+		fname:'c'
+	}];
 	
 	$scope.setCredentials = function() {
 		$modal.open({
@@ -16,18 +23,19 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 					return $scope.connection;
 				}
 			},
-			controller: ['$scope', '$modalInstance', 'connection', '$http',
-				function($scope, $modalInstance, connection, $http) {
+			controller: ['$scope', '$modalInstance', 'connection', '$http', 'Notification',
+				function($scope, $modalInstance, connection, $http, Notification) {
 					// take the data from the main controller
 					$scope.svnurl = connection.svnurl;
 					$scope.login = connection.login;
 					$scope.password = connection.password;
 					
 					$scope.checkingConnection = false;
+					$scope.listFiles = [];
 
 					// define callbacks functions for the buttons
 					$scope.setCredentialsOk = function() {
-						$scope.checkingConnection = false;
+						$scope.checkingConnection = true;
 						$http({
 							method: 'POST',
 							url: BASE_PATH + 'api/check_connection.php',
@@ -37,15 +45,23 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 								password: $scope.password,
 							}
 						}).then(function(res) {
-							console.log('connection result: ', res);
-							
-							$modalInstance.close({
-								svnurl: $scope.svnurl,
-								login: $scope.login,
-								password: $scope.password 
-							});
+							if (res.data.result == 'ok') {
+								Notification.success('Connection succeeded');
+								$modalInstance.close({
+									connection: {
+										svnurl: $scope.svnurl,
+										login: $scope.login,
+										password: $scope.password
+									},
+									listFiles: res.data.ls
+								});
+							} else {
+								Notification.error('Connection failed');
+							}
 						}, function() {
 							console.error('check connection failure');
+						}).finally(function() {
+							$scope.checkingConnection = false;
 						})
 					};
 					$scope.setCredentialsCancel = function() {
@@ -55,7 +71,9 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 			],
 			size: 'sm'
 		}).result.then(function(res) {
-			$scope.connection = res;
+			$scope.connection = res.connection;
+			$scope.listFiles = res.listFiles;
+			$scope.isConnected = true;
 		}, function() {
 			// cancel clicked
 		});

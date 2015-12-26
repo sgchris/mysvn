@@ -20,7 +20,13 @@ if ($result === false) {
 	)));
 }
 
+// transform the result to an array
+$retVal = array();
+foreach ($result as $fileName => $fileInfo) {
+	$retVal[] = array_merge(array('name' => $fileName), $fileInfo);
+}
+
 die(json_encode(array(
 	'result' => 'ok',
-	'ls' => $result,
+	'ls' => $retVal,
 )));

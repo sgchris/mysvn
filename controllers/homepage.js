@@ -1,4 +1,5 @@
-webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $modal){
+webApp.controller('HomepageController', ['$scope', '$modal', '$http', 'Notification', 
+function($scope, $modal, $http, Notification){
 	$scope.items = ["Apple", "Orange", "Blueberry"];
 
 	// set the default connection
@@ -7,14 +8,41 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 		login: 'sgchris_yahoo',
 		password: 'shniWatNeOd3'
 	}; 
+
 	$scope.isConnected = false;
+	$scope.checkingConnection = false;
+	$scope.connect = function() {
+		// connect and list files
+		$scope.checkingConnection = true;
+		$http({
+			method: 'POST',
+			url: BASE_PATH + 'api/check_connection.php',
+			data: {
+				svnurl: $scope.connection.svnurl,
+				login: $scope.connection.login,
+				password: $scope.connection.password,
+			}
+		}).then(function(res) {
+			if (res.data.result == 'ok') {
+				Notification.success('Connection succeeded :)');
+				console.log('res.data.ls', res.data.ls);
+				$scope.listFilesGrid.data = res.data.ls;
+			} else {
+				Notification.error('Connection failed :(');
+			}
+		}, function() {
+			Notification.error('mysvn server error :(');
+		}).finally(function() {
+			$scope.checkingConnection = false;
+		});
+	};
 	
-	// list files
-	$scope.listFiles = [{
-		name:'greg',
-		fname:'c'
-	}];
+	// list files grid
+	$scope.listFilesGrid = {
+		data: []
+	};
 	
+	/*
 	$scope.setCredentials = function() {
 		$modal.open({
 			templateUrl: 'setCredentials.html',
@@ -78,7 +106,9 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 			// cancel clicked
 		});
 	};
+	 */
 
+	/*
 	$scope.open = function(){
 		$modal.open({
 			templateUrl: 'myModalContent.html',
@@ -109,4 +139,5 @@ webApp.controller('HomepageController', ['$scope', '$modal', function($scope, $m
 			console.log('Modal dismissed at: ' + new Date());
 		});
 	};
+	 */
 }]);

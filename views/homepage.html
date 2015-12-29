@@ -57,5 +57,17 @@
 </style>
 <div>
 	<h1>List files</h1>
+	<form>
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-folder-open"></i></span>
+				<input type="text" class="form-control input-lg" ng-model="relativePath" />
+				<div class="input-group-btn">
+					<button class="btn btn-lg btn-default" type="submit">Go</button>
+				</div>
+			</div>
+		</div>
+	</form>
+
 	<div ui-grid="listFilesGrid" class="list-files-grid"></div>
 </div>

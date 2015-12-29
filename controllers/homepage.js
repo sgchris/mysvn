@@ -9,6 +9,7 @@ function($scope, $modal, $http, Notification){
 		password: 'shniWatNeOd3'
 	}; 
 
+	$scope.relativePath = '';
 	$scope.isConnected = false;
 	$scope.checkingConnection = false;
 	$scope.connect = function() {
@@ -25,8 +26,9 @@ function($scope, $modal, $http, Notification){
 		}).then(function(res) {
 			if (res.data.result == 'ok') {
 				Notification.success('Connection succeeded :)');
-				console.log('res.data.ls', res.data.ls);
+				
 				$scope.listFilesGrid.data = res.data.ls;
+				$scope.relativePath = '/';
 			} else {
 				Notification.error('Connection failed :(');
 			}

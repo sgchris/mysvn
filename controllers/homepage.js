@@ -9,108 +9,103 @@ function($scope, $modal, $http, Notification){
 		password: 'shniWatNeOd3'
 	}; 
 
+	// set the default connection
+	/*
+	$scope.connection = {
+		svnurl: 'https://il-cms1.zend.net/svn/Zend/Engine/ZendServer/trunk/gui',
+		login: 'gregory.c',
+		password: 'YT65yt65'
+	};
+	 */ 
+
 	$scope.relativePath = '';
 	$scope.isConnected = false;
 	$scope.checkingConnection = false;
-	$scope.connect = function() {
-		// connect and list files
-		$scope.checkingConnection = true;
+	$scope.loadingFilesList = false;
+	
+	$scope.listFiles = function(initial, callbackFn) {
+		$scope.loadingFilesList = true;
+		
+		if (initial) {
+			$scope.relativePath = '/';
+		}
+		
+		// get the URL and the path
+		var svnUrl = $scope.connection.svnurl.trim().replace(/\/$/g, '');
+		var relativePath = $scope.relativePath.trim().replace(/^\//g, '').replace(/\/$/g, '');
+		// add the relative path
+		svnUrl+= '/' + relativePath;
 		$http({
 			method: 'POST',
-			url: BASE_PATH + 'api/check_connection.php',
+			url: BASE_PATH + 'api/list_files.php',
 			data: {
-				svnurl: $scope.connection.svnurl,
+				svnurl: svnUrl,
 				login: $scope.connection.login,
 				password: $scope.connection.password,
 			}
 		}).then(function(res) {
 			if (res.data.result == 'ok') {
-				Notification.success('Connection succeeded :)');
+				if ($scope.relativePath != '/') {
+					res.data.ls.splice(0, 0, {
+						created_rev: 0,
+						last_author: "",
+						name: "..",
+						size: -1,
+						time: "",
+						time_t: 0,
+						type: "dir"
+					});
+				}
 				
 				$scope.listFilesGrid.data = res.data.ls;
-				$scope.relativePath = '/';
+				
+				if (typeof(callbackFn) == 'function') {
+					callbackFn();
+				}
 			} else {
-				Notification.error('Connection failed :(');
+				Notification.error('Cannot files files :(');
 			}
 		}, function() {
 			Notification.error('mysvn server error :(');
 		}).finally(function() {
 			$scope.checkingConnection = false;
+			$scope.loadingFilesList = false;
 		});
+	};
+	$scope.listFiles(true);
+	
+	$scope.connect = function() {
+		// connect and list files
+		$scope.checkingConnection = true;
+		$scope.listFiles('initialLoading = true', function() {
+			Notification.success('Connection succeeded :)');
+		});
+	};
+	
+	$scope.listFilesRowClicked = function(row) {
+		
+		if (row.name == '..') {
+			$scope.relativePath = $scope.relativePath.substr(0, $scope.relativePath.lastIndexOf('/'));
+			if ($scope.relativePath == '') $scope.relativePath = '/';
+		} else {
+			$scope.relativePath = $scope.relativePath.replace(/\/$/g, '') + '/' + row.name;
+		}
+		$scope.listFiles();
 	};
 	
 	// list files grid
 	$scope.listFilesGrid = {
+		rowTemplate: '<div ' + 
+				'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
+				'class="ui-grid-cell" ' + 
+				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'files-list-row-hover\': filesListIsHover }" ui-grid-cell ' + 
+				'ng-mouseenter="filesListIsHover = true" ng-mouseleave="filesListIsHover = false" ng-init="filesListIsHover=false" '+
+				'ng-dblclick="grid.appScope.listFilesRowClicked(row.entity)"></div>',
 		data: []
 	};
-	
-	/*
-	$scope.setCredentials = function() {
-		$modal.open({
-			templateUrl: 'setCredentials.html',
-			resolve: {
-				connection: function() {
-					return $scope.connection;
-				}
-			},
-			controller: ['$scope', '$modalInstance', 'connection', '$http', 'Notification',
-				function($scope, $modalInstance, connection, $http, Notification) {
-					// take the data from the main controller
-					$scope.svnurl = connection.svnurl;
-					$scope.login = connection.login;
-					$scope.password = connection.password;
-					
-					$scope.checkingConnection = false;
-					$scope.listFiles = [];
-
-					// define callbacks functions for the buttons
-					$scope.setCredentialsOk = function() {
-						$scope.checkingConnection = true;
-						$http({
-							method: 'POST',
-							url: BASE_PATH + 'api/check_connection.php',
-							data: {
-								svnurl: $scope.svnurl,
-								login: $scope.login,
-								password: $scope.password,
-							}
-						}).then(function(res) {
-							if (res.data.result == 'ok') {
-								Notification.success('Connection succeeded');
-								$modalInstance.close({
-									connection: {
-										svnurl: $scope.svnurl,
-										login: $scope.login,
-										password: $scope.password
-									},
-									listFiles: res.data.ls
-								});
-							} else {
-								Notification.error('Connection failed');
-							}
-						}, function() {
-							console.error('check connection failure');
-						}).finally(function() {
-							$scope.checkingConnection = false;
-						})
-					};
-					$scope.setCredentialsCancel = function() {
-						$modalInstance.dismiss();
-					};
-				}
-			],
-			size: 'sm'
-		}).result.then(function(res) {
-			$scope.connection = res.connection;
-			$scope.listFiles = res.listFiles;
-			$scope.isConnected = true;
-		}, function() {
-			// cancel clicked
-		});
-	};
-	 */
 
 	/*
+	// open modal example
 	$scope.open = function(){
 		$modal.open({
 			templateUrl: 'myModalContent.html',

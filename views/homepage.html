@@ -69,5 +69,5 @@
 		</div>
 	</form>
 
-	<div ui-grid="listFilesGrid" class="list-files-grid"></div>
+	<div ng-disabled="loadingFilesList || checkingConnection" ui-grid="listFilesGrid" class="list-files-grid"></div>
 </div>

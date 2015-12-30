@@ -71,3 +71,16 @@
 
 	<div ng-disabled="loadingFilesList || checkingConnection" ui-grid="listFilesGrid" class="list-files-grid"></div>
 </div>
+
+<div>
+	<h1>List commits</h1>
+	<form class="form-inline">
+		<label for="list-commits-from-revision">From Revision</label>
+		<input type="text" id="list-commits-from-revision" ng-model="listCommitsFromRevision" placeholder="123" />
+		<label for="list-commits-to-revision">From Revision</label>
+		<input type="text" id="list-commits-to-revision" ng-model="listCommitsToRevision" placeholder="456" />
+		<input type="submit" value="Go" />
+	</form>
+
+	<div ui-grid="listCommitsGrid" class="list-commits-grid"></div>
+</div>

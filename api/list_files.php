@@ -4,7 +4,7 @@
  * POST /api/check_connection.php
  * {host, login, password}
  * ----- response
- * {"result":"ok"}
+ * {"result":"ok", "ls":[...]}
  * {"result":"error","error":"error info"}
  */
 

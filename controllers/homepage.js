@@ -35,9 +35,16 @@ webApp
 
 // define the controller
 webApp
-	.controller('HomepageController', ['$scope', '$modal', '$http', 'Notification', 
-function($scope, $modal, $http, Notification){
+	.controller('HomepageController', ['$scope', '$modal', '$http', 'Notification', function($scope, $modal, $http, Notification) {
 	$scope.items = ["Apple", "Orange", "Blueberry"];
+	
+	// tabs
+	$scope.commitsTabIsVisible = true;
+	$scope.filesTabIsVisible = false;
+	$scope.tabClick = function(tabName) {
+		$scope.commitsTabIsVisible = (tabName == 'commits');
+		$scope.filesTabIsVisible = (tabName == 'files');
+	};
 
 	// set the default connection
 	$scope.connection = {
@@ -81,6 +88,7 @@ function($scope, $modal, $http, Notification){
 				password: $scope.connection.password,
 			}
 		}).then(function(res) {
+			console.log('res', res);
 			if (res.data.result == 'ok') {
 				if ($scope.relativePath != '/') {
 					res.data.ls.splice(0, 0, {

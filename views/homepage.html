@@ -1,3 +1,4 @@
+<!--
 <script type="text/ng-template" id="setCredentials.html">
 	<div class="modal-header">
 		<h3 class="modal-title">SVN Connect</h3>
@@ -23,8 +24,15 @@
 		<button class="btn btn-default" ng-click="setCredentialsCancel()">Cancel</button>
 	</div>
 </script>
+-->
 
+<style>
 
+.list-files-grid {
+	height: 360px;
+}
+
+</style>
 <div>
 	<h1>SVN Path and Credentials</h1>
 	<form ng-submit="connect()">
@@ -50,12 +58,26 @@
 	</form>
 </div>
 
-<style>
-.list-files-grid {
-	height: 360px;
-}
-</style>
-<div>
+<br />
+<ul class="nav nav-tabs">
+	<li ng-class="{active: commitsTabIsVisible}"><a href="#" ng-click="tabClick('commits');">Commits</a></li>
+	<li ng-class="{active: filesTabIsVisible}"><a href="#" ng-click="tabClick('files');">Files</a></li>
+</ul>
+
+<div ng-show="commitsTabIsVisible">
+	<h1>List commits</h1>
+	<form class="form-inline">
+		<label for="list-commits-from-revision">From Revision</label>
+		<input type="text" id="list-commits-from-revision" ng-model="listCommitsFromRevision" placeholder="123" />
+		<label for="list-commits-to-revision">From Revision</label>
+		<input type="text" id="list-commits-to-revision" ng-model="listCommitsToRevision" placeholder="456" />
+		<input type="submit" value="Go" />
+	</form>
+
+	<div ui-grid="listCommitsGrid" class="list-commits-grid"></div>
+</div>
+
+<div ng-show="filesTabIsVisible">
 	<h1>List files</h1>
 	<form>
 		<div class="form-group">
@@ -70,17 +92,4 @@
 	</form>
 
 	<div ng-disabled="loadingFilesList || checkingConnection" ui-grid="listFilesGrid" class="list-files-grid"></div>
-</div>
-
-<div>
-	<h1>List commits</h1>
-	<form class="form-inline">
-		<label for="list-commits-from-revision">From Revision</label>
-		<input type="text" id="list-commits-from-revision" ng-model="listCommitsFromRevision" placeholder="123" />
-		<label for="list-commits-to-revision">From Revision</label>
-		<input type="text" id="list-commits-to-revision" ng-model="listCommitsToRevision" placeholder="456" />
-		<input type="submit" value="Go" />
-	</form>
-
-	<div ui-grid="listCommitsGrid" class="list-commits-grid"></div>
 </div>

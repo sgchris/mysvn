@@ -10,6 +10,22 @@ webApp
 			return $sce.trustAsHtml('<span style="margin-left: 5px; line-height: 30px;"><i class="glyphicon glyphicon-' + icon + '"></i>&nbsp;&nbsp;' + val + '</span>');
 		}
 	}])
+	.filter('svnDateFilter', function() {
+		return function(val) {
+			var d = new Date(val);
+			var hours = d.getHours();
+			if (hours < 10) hours = '0' + hours;
+			var minutes = d.getMinutes();
+			if (minutes < 10) minutes = '0' + minutes;
+			return d.toDateString() + ' (' + hours + ':' + minutes + ')';
+		}
+	})
+	.filter('svnActionFilter', function() {
+		return function(val) {
+			var values = {'a': 'Added', 'm': 'Modified', 'r': 'Replaced', 'd': 'Deleted'};
+			return values[val.toLowerCase()] || val;
+		}
+	})
 	.filter('fileSizeFilter', [function() {
 		// from: http://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable
 		function humanFileSize(bytes) {
@@ -99,7 +115,7 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 			}
 			
 			// re-draw the grid
-			angular.element(window).trigger('resize');
+			//angular.element(window).trigger('resize');
 		}, function() {
 			Notification.error('mysvn server error :(');
 		}).finally(function() {
@@ -107,7 +123,63 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 		});
 	};
 	
+	// update modified files list per commit, on commit row click
+	$scope.currentCommitRevId = 'N/A';
+	$scope.listCommitsRowClicked = function(row) {
+		console.log('row', row);
+		$scope.currentCommitRevId = row.rev;
+		console.log('$scope.commitsFiles[row.rev]', $scope.commitsFiles[row.rev]);
+		$scope.modifiedFilesGrid.data = $scope.commitsFiles[row.rev];
+	};
+	
+	// list of last commits - grid
 	$scope.listCommitsGrid = {
+		
+		rowTemplate: '<div ' + 
+			'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
+			'class="ui-grid-cell" ' + 
+			'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-commit\': (grid.appScope.currentCommitRevId == row.rev) }" ' + 
+			'ui-grid-cell ' + 
+			'ng-click="grid.appScope.listCommitsRowClicked(row.entity)"></div>',
+		
+		columnDefs: [{
+			name: 'rev',
+			displayName: '#REV',
+			width: '10%'
+			//cellTemplate: '<span ng-bind-html="row.entity[col.name] | nameColumnFilter:row.entity"></span>',
+		}, {
+			name: 'msg',
+			displayName: 'Message',
+			width: '50%' 
+			//cellFilter: 'fileSizeFilter'
+		}, {
+			name: 'author',
+			displayName: 'Author',
+			width: '20%'
+		}, {
+			name: 'date',
+			displayName: 'Date',
+			width: '20%',
+			cellFilter: 'svnDateFilter'
+		}],
+		
+		data: []
+	};
+	
+	// list of modified files per commit - grid
+	$scope.modifiedFilesGrid = {
+		columnDefs: [{
+			name: 'action',
+			displayName: 'Action',
+			width: '20%',
+			cellFilter: 'svnActionFilter'
+			//cellTemplate: '<span ng-bind-html="row.entity[col.name] | nameColumnFilter:row.entity"></span>',
+		}, {
+			name: 'path',
+			displayName: 'Resource',
+			width: '80%' 
+		}],
+		
 		data: []
 	};
 	
@@ -184,8 +256,7 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 			}
 			
 			// re-draw the grid
-			angular.element(window).trigger('resize');
-
+			//angular.element(window).trigger('resize');
 		}, function() {
 			Notification.error('mysvn server error :(');
 		}).finally(function() {
@@ -257,7 +328,6 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 				$scope.commitsTabInitiallized = true;
 				$scope.listCommits();
 			}
-			
 		}
 		
 		if (tabName == 'files') {
@@ -272,7 +342,7 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 		}
 		
 		// re-draw the grids
-		angular.element(window).trigger('resize');
+		//angular.element(window).trigger('resize');
 	};
 	$scope.tabClick('commits');
 	

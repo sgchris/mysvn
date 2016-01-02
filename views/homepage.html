@@ -27,9 +27,11 @@
 -->
 
 <style>
-
 .list-files-grid {
 	height: 360px;
+}
+.selected-commit {
+	background: red;
 }
 #loading-indicator {
 	position: fixed;
@@ -76,8 +78,34 @@
 	<li ng-class="{active: filesTabIsVisible}"><a href="#" ng-click="tabClick('files');">Files</a></li>
 </ul>
 
-<div ng-show="commitsTabIsVisible">
+<div ng-if="commitsTabIsVisible">
 	<h1>List commits</h1>
+	
+	<div class="row">
+		<div class="col-xs-3">
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon"><i class="glyphicon glyphicon-list-alt"></i></span>
+					<input type="text" class="form-control input-lg" ng-model="listCommitsFromRevision" placeholder="From REV" />
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-3">
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon"><i class="glyphicon glyphicon-list-alt"></i></span>
+					<input type="text" class="form-control input-lg" ng-model="listCommitsToRevision" placeholder="To REV" />
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-1">
+			<div class="input-group-btn">
+				<button class="btn btn-lg btn-default" type="submit">Go</button>
+			</div>
+		</div>
+	</div>
+	
+	<!--
 	<form class="form-inline">
 		<label for="list-commits-from-revision">From Revision</label>
 		<input type="text" id="list-commits-from-revision" ng-model="listCommitsFromRevision" placeholder="123" />
@@ -85,11 +113,14 @@
 		<input type="text" id="list-commits-to-revision" ng-model="listCommitsToRevision" placeholder="456" />
 		<input type="submit" value="Go" />
 	</form>
-
+	-->
 	<div ui-grid="listCommitsGrid" class="list-commits-grid"></div>
+	
+	<h2>modified files (Commit #{{currentCommitRevId}})</h1>
+	<div ui-grid="modifiedFilesGrid" class="modified-files-grid"></div>
 </div>
 
-<div ng-show="filesTabIsVisible">
+<div ng-if="filesTabIsVisible">
 	<h1>List files</h1>
 	<form>
 		<div class="form-group">

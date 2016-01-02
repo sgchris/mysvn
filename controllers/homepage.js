@@ -34,39 +34,94 @@ webApp
 
 
 // define the controller
-webApp
-	.controller('HomepageController', ['$scope', '$modal', '$http', 'Notification', function($scope, $modal, $http, Notification) {
-	$scope.items = ["Apple", "Orange", "Blueberry"];
+webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout', 'Notification', function($scope, $modal, $http, $timeout, Notification) {
 	
-	// tabs
-	$scope.commitsTabIsVisible = true;
-	$scope.filesTabIsVisible = false;
-	$scope.tabClick = function(tabName) {
-		$scope.commitsTabIsVisible = (tabName == 'commits');
-		$scope.filesTabIsVisible = (tabName == 'files');
-	};
-
 	// set the default connection
 	$scope.connection = {
 		svnurl: 'https://subversion.assembla.com/svn/mysvn-sgchris-1/trunk',
 		login: 'sgchris_yahoo',
 		password: 'shniWatNeOd3'
-	}; 
-
-	// set the default connection
-	/*
-	$scope.connection = {
-		svnurl: 'https://il-cms1.zend.net/svn/Zend/Engine/ZendServer/trunk/gui',
-		login: 'gregory.c',
-		password: 'YT65yt65'
 	};
-	*/ 
-
+	
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// commits list
+	///////////////////////////////////////////////////////////////////////////////////////////
+	
+	// store the changed files per commit
+	$scope.commitsFiles = {};
+	$scope.loadingCommitsList = false;
+	
+	// load commits list
+	$scope.listCommits = function(callbackFn) {
+		$scope.loadingCommitsList = true;
+		
+		// get the URL and the path
+		var svnUrl = $scope.connection.svnurl.trim().replace(/\/$/g, '');
+		
+		$http({
+			method: 'POST',
+			url: BASE_PATH + 'api/list_commits.php',
+			data: {
+				svnurl: svnUrl,
+				login: $scope.connection.login,
+				password: $scope.connection.password,
+				
+				from_revision: 'initial',
+				to_revision: 'head',
+				limit: 20
+			}
+		}).then(function(res) {
+			$scope.loadingCommitsList = false;
+			if (res.data.result == 'ok') {
+				
+				/*
+				$$hashKey: "uiGrid-035"
+				author: "www-data"
+				date: "2014-08-26T20:22:14.122249Z"
+				msg: "Automatically created readme.textile and /trunk, /branches, /tags directories. We recommend you to put all your code there."
+				paths: Array[4]
+				rev: 1
+				*/
+				
+				// cache commits' changed files
+				res.data.commits.forEach(function(cm, i) {
+					$scope.commitsFiles[cm.rev] = cm.paths;
+					delete res.data.commits[i].paths;
+				});
+				
+				$scope.listCommitsGrid.data = res.data.commits;
+				
+				if (typeof(callbackFn) == 'function') {
+					callbackFn();
+				}
+			} else {
+				Notification.error('Cannot files files :(');
+			}
+			
+			// re-draw the grid
+			angular.element(window).trigger('resize');
+		}, function() {
+			Notification.error('mysvn server error :(');
+		}).finally(function() {
+			$scope.loadingCommitsList = false;
+		});
+	};
+	
+	$scope.listCommitsGrid = {
+		data: []
+	};
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// files list
+	///////////////////////////////////////////////////////////////////////////////////////////
+	
+	// path relative to the base svn URL
 	$scope.relativePath = '';
-	$scope.isConnected = false;
-	$scope.checkingConnection = false;
+	
 	$scope.loadingFilesList = false;
 	
+	// load the files list (using relative path)
 	$scope.listFiles = function(initial, callbackFn) {
 		$scope.loadingFilesList = true;
 		
@@ -88,7 +143,6 @@ webApp
 				password: $scope.connection.password,
 			}
 		}).then(function(res) {
-			console.log('res', res);
 			if (res.data.result == 'ok') {
 				if ($scope.relativePath != '/') {
 					res.data.ls.splice(0, 0, {
@@ -128,73 +182,19 @@ webApp
 			} else {
 				Notification.error('Cannot files files :(');
 			}
+			
+			// re-draw the grid
+			angular.element(window).trigger('resize');
+
 		}, function() {
 			Notification.error('mysvn server error :(');
 		}).finally(function() {
-			$scope.checkingConnection = false;
 			$scope.loadingFilesList = false;
 		});
 	};
-	$scope.listFiles(true);
-	
-	$scope.loadingFilesList = false;
-	$scope.commitsFiles = {};
-	$scope.listCommits = function(callbackFn) {
-		$scope.loadingCommitsList = true;
-		
-		// get the URL and the path
-		var svnUrl = $scope.connection.svnurl.trim().replace(/\/$/g, '');
-		
-		$http({
-			method: 'POST',
-			url: BASE_PATH + 'api/list_commits.php',
-			data: {
-				svnurl: svnUrl,
-				login: $scope.connection.login,
-				password: $scope.connection.password,
-				
-				from_revision: 'initial',
-				to_revision: 'head',
-				limit: 20
-			}
-		}).then(function(res) {
-			if (res.data.result == 'ok') {
-				
-				/*
-				$$hashKey: "uiGrid-035"
-				author: "www-data"
-				date: "2014-08-26T20:22:14.122249Z"
-				msg: "Automatically created readme.textile and /trunk, /branches, /tags directories. We recommend you to put all your code there."
-				paths: Array[4]
-				rev: 1
-				*/
-				
-				// cache commits' changed files
-				res.data.commits.forEach(function(cm, i) {
-					$scope.commitsFiles[cm.rev] = cm.paths;
-					delete res.data.commits[i].paths;
-				});
-				
-				$scope.listCommitsGrid.data = res.data.commits;
-				
-				if (typeof(callbackFn) == 'function') {
-					callbackFn();
-				}
-			} else {
-				Notification.error('Cannot files files :(');
-			}
-		}, function() {
-			Notification.error('mysvn server error :(');
-		}).finally(function() {
-			$scope.checkingConnection = false;
-			$scope.loadingFilesList = false;
-		});
-	};
-	$scope.listCommits();
 	
 	$scope.connect = function() {
 		// connect and list files
-		$scope.checkingConnection = true;
 		$scope.listFiles('initialLoading = true', function() {
 			Notification.success('Connection succeeded :)');
 		});
@@ -220,15 +220,7 @@ webApp
 			'ng-mouseenter="filesListIsHover = true" ng-mouseleave="filesListIsHover = false" ng-init="filesListIsHover=false" '+
 			'ng-dblclick="grid.appScope.listFilesRowClicked(row.entity)"></div>',
 	
-		/*
-		created_rev: 0,
-		last_author: "",
-		name: "..",
-		size: -1,
-		time: "",
-		time_t: 0,
-		type: "dir"
-		*/
+		/* created_rev: 0, last_author: "", name: "..", size: -1, time: "", time_t: 0, type: "dir" */
 		columnDefs: [{
 			name: 'name',
 			displayName: 'Node',
@@ -246,10 +238,44 @@ webApp
 		}],
 		data: []
 	};
+		
 	
-	$scope.listCommitsGrid = {
-		data: []
+	///////////////////////////////////////////////////////////////////////////////////////////
+	// tabs
+	///////////////////////////////////////////////////////////////////////////////////////////
+	
+	$scope.commitsTabIsVisible = true;
+	$scope.commitsTabInitiallized = false;
+	$scope.filesTabIsVisible = false;
+	$scope.filesTabInitialized = false;
+	$scope.tabClick = function(tabName) {
+		if (tabName == 'commits') {
+			$scope.commitsTabIsVisible = true;
+			$scope.filesTabIsVisible = false;
+			
+			if (!$scope.commitsTabInitiallized) {
+				$scope.commitsTabInitiallized = true;
+				$scope.listCommits();
+			}
+			
+		}
+		
+		if (tabName == 'files') {
+			$scope.commitsTabIsVisible = false;
+			$scope.filesTabIsVisible = true;
+			
+			if (!$scope.filesTabInitialized) {
+				$scope.filesTabInitialized = true;
+				var initialLoading = true;
+				$scope.listFiles(initialLoading);
+			}
+		}
+		
+		// re-draw the grids
+		angular.element(window).trigger('resize');
 	};
+	$scope.tabClick('commits');
+	
 	
 	/*
 	// open modal example

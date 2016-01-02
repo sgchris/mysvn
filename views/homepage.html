@@ -31,8 +31,20 @@
 .list-files-grid {
 	height: 360px;
 }
-
+#loading-indicator {
+	position: fixed;
+	top: 0;
+	right: 0;
+	padding: 5px 10px;
+	
+	background: #C11;
+	color: #FFF;
+	
+	font-size: 12px;
+	line-height: 16px;
+}
 </style>
+<div ng-show="loadingFilesList || loadingCommitsList" id="loading-indicator">Loading...</div>
 <div>
 	<h1>SVN Path and Credentials</h1>
 	<form ng-submit="connect()">

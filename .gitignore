@@ -4,3 +4,6 @@
 .codelite
 *.phprj
 *.workspace
+
+# hide file with credentials
+assets/js/svn_cred.js

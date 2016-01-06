@@ -53,11 +53,7 @@ webApp
 webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout', 'Notification', function($scope, $modal, $http, $timeout, Notification) {
 	
 	// set the default connection
-	$scope.connection = {
-		svnurl: 'https://subversion.assembla.com/svn/mysvn-sgchris-1/trunk',
-		login: 'sgchris_yahoo',
-		password: 'shniWatNeOd3'
-	};
+	$scope.connection = SVN_CREDENTIALS;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// commits list
@@ -114,8 +110,6 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 				Notification.error('Cannot files files :(');
 			}
 			
-			// re-draw the grid
-			//angular.element(window).trigger('resize');
 		}, function() {
 			Notification.error('mysvn server error :(');
 		}).finally(function() {
@@ -123,12 +117,54 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 		});
 	};
 	
+	$scope.getDiffWithPreviousRevision = function(path, revision, callbackFn) {
+		console.log('path, revision', path, revision);
+		// path starts from "/trunk" (or branches/tags)
+		var endOfBaseUrl,
+			baseSvnPath = $scope.connection.svnurl;
+		if ((endOfBaseUrl = baseSvnPath.indexOf('/trunk')) >= 0) {
+			baseSvnPath = baseSvnPath.substr(0, endOfBaseUrl);
+		} else if ((endOfBaseUrl = baseSvnPath.indexOf('/branches')) >= 0) {
+			baseSvnPath = baseSvnPath.substr(0, endOfBaseUrl);
+		} else if ((endOfBaseUrl = baseSvnPath.indexOf('/branches')) >= 0) {
+			baseSvnPath = baseSvnPath.substr(0, endOfBaseUrl);
+		} else {
+			// assume that baseSvnPath is correct - just trim the last "/" char
+			if (baseSvnPath.charAt(baseSvnPath.length - 1) == '/') {
+				baseSvnPath = baseSvnPath.substr(0, baseSvnPath.length - 1);
+			}
+		}
+		
+		$http({
+			method: 'POST',
+			url: BASE_PATH + 'api/get_diff.php',
+			data: {
+				svnurl: baseSvnPath + path,
+				login: $scope.connection.login,
+				password: $scope.connection.password,
+				
+				revision: revision,
+			}
+		}).then(function(res) {
+			console.log('res', res);
+			/*
+			if (res.data.result == 'ok') {
+			
+			} else {
+				Notification.error('Cannot files files :(');
+			}
+			*/
+		}, function() {
+			Notification.error('mysvn server error :(');
+		}).finally(function() {
+			$scope.loadingCommitsList = false;
+		});
+	}
+	
 	// update modified files list per commit, on commit row click
 	$scope.currentCommitRevId = 'N/A';
 	$scope.listCommitsRowClicked = function(row) {
-		console.log('row', row);
 		$scope.currentCommitRevId = row.rev;
-		console.log('$scope.commitsFiles[row.rev]', $scope.commitsFiles[row.rev]);
 		$scope.modifiedFilesGrid.data = $scope.commitsFiles[row.rev];
 	};
 	
@@ -168,6 +204,13 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 	
 	// list of modified files per commit - grid
 	$scope.modifiedFilesGrid = {
+		rowTemplate: '<div ' + 
+			'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
+			'class="ui-grid-cell" ' + 
+			'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-commit\': (grid.appScope.currentCommitRevId == row.rev) }" ' + 
+			'ui-grid-cell ' + 
+			'ng-click="grid.appScope.getDiffWithPreviousRevision(row.entity[\'path\'], grid.appScope.currentCommitRevId)"></div>',
+			
 		columnDefs: [{
 			name: 'action',
 			displayName: 'Action',
@@ -269,6 +312,11 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 		$scope.listFiles('initialLoading = true', function() {
 			Notification.success('Connection succeeded :)');
 		});
+		
+		// list commits
+		$scope.listCommits(function() {
+			Notification.success('Connection succeeded :)');
+		});
 	};
 	
 	$scope.listFilesRowClicked = function(row) {
@@ -345,7 +393,6 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 		//angular.element(window).trigger('resize');
 	};
 	$scope.tabClick('commits');
-	
 	
 	/*
 	// open modal example

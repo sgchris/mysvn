@@ -61,6 +61,7 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 	
 	// store the changed files per commit
 	$scope.commitsFiles = {};
+	$scope.commitFilesDiff = '';
 	$scope.loadingCommitsList = false;
 	
 	// load commits list
@@ -118,7 +119,7 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 	};
 	
 	$scope.getDiffWithPreviousRevision = function(path, revision, callbackFn) {
-		console.log('path, revision', path, revision);
+		
 		// path starts from "/trunk" (or branches/tags)
 		var endOfBaseUrl,
 			baseSvnPath = $scope.connection.svnurl;
@@ -135,6 +136,7 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 			}
 		}
 		
+		$scope.loadingCommitsList = true;
 		$http({
 			method: 'POST',
 			url: BASE_PATH + 'api/get_diff.php',
@@ -146,20 +148,20 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 				revision: revision,
 			}
 		}).then(function(res) {
-			console.log('res', res);
-			/*
-			if (res.data.result == 'ok') {
 			
+			if (res.data.result == 'ok') {
+				console.log('data ok', res.data.diff);
+				$scope.commitFilesDiff = res.data.diff;
 			} else {
-				Notification.error('Cannot files files :(');
+				Notification.error('Cannot get diff :(');
 			}
-			*/
+			
 		}, function() {
-			Notification.error('mysvn server error :(');
+			Notification.error('Cannot get diff :(');
 		}).finally(function() {
 			$scope.loadingCommitsList = false;
 		});
-	}
+	};
 	
 	// update modified files list per commit, on commit row click
 	$scope.currentCommitRevId = 'N/A';

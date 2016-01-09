@@ -1,4 +1,4 @@
-webApp = angular.module('WebApp', ['ngRoute', 'ui.bootstrap', 'ui.grid', 'ui-notification']);
+webApp = angular.module('WebApp', ['ngRoute', 'ui.bootstrap', 'ui.grid', 'ui-notification', 'hljs']);
 webApp.config(['$httpProvider', function($httpProvider) {
 	
 	// Use x-www-form-urlencoded Content-Type

@@ -26,7 +26,11 @@
 </script>
 -->
 
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/github.min.css">
 <style>
+body {
+	padding-bottom: 50px;
+}
 .list-files-grid {
 	height: 360px;
 }
@@ -44,6 +48,10 @@
 	
 	font-size: 12px;
 	line-height: 16px;
+}
+#commit-files-diff {
+	XXX-font-family: monospace;
+	height: 300px;
 }
 </style>
 <div ng-show="loadingFilesList || loadingCommitsList" id="loading-indicator">Loading...</div>
@@ -118,6 +126,11 @@
 	
 	<h2>modified files (Commit #{{currentCommitRevId}})</h1>
 	<div ui-grid="modifiedFilesGrid" class="modified-files-grid"></div>
+	
+	<h2>Commit Diff(s)</h2>
+	<div class="row">
+	<div id="commit-files-diff" class="col-xs-12" hljs source="commitFilesDiff">this is some text</div>
+	<!--<textarea hljs id="commit-files-diff" class="form-control" rows="15" ng-model="commitFilesDiff"></textarea>-->
 </div>
 
 <div ng-if="filesTabIsVisible">

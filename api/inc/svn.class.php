@@ -72,9 +72,12 @@ class SvnClient {
 			$toRevision = $this->lastRevisionNumber;
 		}
 		
-		// prepare the command
+		// prepare and execute the command
 		$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$this->svnUrl;
 		$result = $this->_exec($command);
+		
+		// transform to PHP readable format
+		$result = $this->_svnLogOutputToArray($result);
 		return $result;
 	}
 	
@@ -133,4 +136,114 @@ class SvnClient {
 		return $asArray ? $output : implode("\n", $output);
 	}
 	
+	
+		
+		
+		
+		
+	/**
+	 * @brief convert output from 'svn log -v' to array that looks like:
+	 * [{
+	 * 	"rev":101220,
+	 * 	"author":"oz",
+	 * 	"msg":"oops - returned gui from the dead",
+	 * 	"date":"2015-09-17T12:38:18.824119Z",
+	 * 	"paths":[{
+	 * 		"action":"A",
+	 * 		"path":"\/Engine\/ZendServer\/trunk\/gui",
+	 * 		"copyfrom":"\/Engine\/ZendServer\/trunk\/gui",
+	 * 		"rev":101217
+	 * 	}]},
+	 * 	...
+	 * 	]
+	 * 
+	 * @param array $output 
+	 * @return array
+	 */
+	protected function _svnLogOutputToArray(array $output) {
+		$retVal = array();
+		
+		$commits = $this->_getCommitsFromOutput($output);
+		foreach ($commits as $rawCommit) {
+			$commit = $this->_getArrayFromCommitOutput($rawCommit);
+			$retVal[] = $commit;
+		}
+		
+		return $retVal;
+	}
+
+	/**
+	 * @brief separate `svn log -v` output to separate arrays
+	 * @param array $output 
+	 * @return  
+	 */
+	protected function _getCommitsFromOutput(array $output) {
+		$commitsList = array();
+		$commitNumber = null;
+		foreach ($output as $outputLine) {
+			if (strpos($outputLine, '----------') !== false) {
+				$commitNumber = is_null($commitNumber) ? 0 : $commitNumber + 1;
+			} elseif (is_numeric($commitNumber)) {
+				$commitsList[$commitNumber][] = $outputLine;
+			}
+		}
+		
+		return $commitsList;
+	}
+
+	/**
+	 * @brief one commit to structured array
+	 * @param array $output 
+	 * @return  
+	 */
+	protected function _getArrayFromCommitOutput(array $output) {
+		$firstLine = array_shift($output);
+		$firstLine = preg_split('%\s*\|\s*%i', $firstLine);
+		
+		// get base data
+		$revision = intval(str_ireplace('r', '', $firstLine[0]));
+		$author = $firstLine[1];
+		$timeStamp = strtotime(substr($firstLine[2], 0, strpos($firstLine[2], '(')));
+		$date = date('d M Y H:i:s', $timeStamp);
+		
+		// get commit message
+		$commitMessage = '';
+		while (($msgLine = array_pop($output)) != '') {
+			$commitMessage = "{$msgLine} {$commitMessage}";
+		}
+		$commitMessage = trim($commitMessage);
+		
+		$retVal = array(
+			'rev' => $revision,
+			'author' => $author,
+			'date' => $date,
+			'msg' => $commitMessage,
+			'paths' => array(),
+		);
+		
+		// get changed paths list
+		if (stripos($output[0], 'changed paths') !== false) {
+			array_shift($output);
+			
+			// gather the modified paths
+			foreach ($output as $modifiedResoruceLine) {
+				$modifiedResoruceLine = preg_split('%\s+%', trim($modifiedResoruceLine));
+				$retVal['paths'][] = array(
+					'action' => $modifiedResoruceLine[0],
+					'path' => $modifiedResoruceLine[1],
+				);
+			}
+		}
+		
+		return $retVal;
+	}
+
+	
+	
 }
+
+
+
+
+
+

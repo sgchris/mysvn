@@ -53,6 +53,11 @@ webApp
 webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout', 'Notification', function($scope, $modal, $http, $timeout, Notification) {
 	
 	// set the default connection
+	var SVN_CREDENTIALS = window.SVN_CREDENTIALS || {
+		svnurl: '',
+		login: '',
+		password: ''
+	};
 	$scope.connection = SVN_CREDENTIALS;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////

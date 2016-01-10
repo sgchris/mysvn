@@ -18,12 +18,14 @@ $authenticationArgs = '--username='.$login.' --password='.$password;
 
 // @TODO validate parameters
 
+/*
 // authentication (from: http://php.net/manual/en/function.svn-auth-set-parameter.php)
 svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_USERNAME, $login);
 svn_auth_set_parameter(SVN_AUTH_PARAM_DEFAULT_PASSWORD, $password);
 svn_auth_set_parameter(PHP_SVN_AUTH_PARAM_IGNORE_SSL_VERIFY_ERRORS, true); // <--- Important for certificate issues! 
 svn_auth_set_parameter(SVN_AUTH_PARAM_NON_INTERACTIVE, true); 
 svn_auth_set_parameter(SVN_AUTH_PARAM_NO_AUTH_CACHE, true); 
+*/
 
 /**
  * @brief Get base svn URL from a full svn resource url

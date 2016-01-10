@@ -17,8 +17,8 @@
 require_once __DIR__ . '/inc/config.php';
 
 // get extra parameters
-$fromRevision = isset($_POST['from_revision']) && is_numeric($_POST['from_revision']) ? $_POST['from_revision'] : SVN_REVISION_INITIAL;
-$toRevision = isset($_POST['to_revision']) && is_numeric($_POST['to_revision']) ? $_POST['to_revision'] : SVN_REVISION_HEAD;
+$fromRevision = isset($_POST['from_revision']) && is_numeric($_POST['from_revision']) ? $_POST['from_revision'] : 0;
+$toRevision = isset($_POST['to_revision']) && is_numeric($_POST['to_revision']) ? $_POST['to_revision'] : 'HEAD';
 $limit = isset($_POST['limit']) && is_numeric($_POST['limit']) ? $_POST['limit'] : 20;
 
 // list the commits

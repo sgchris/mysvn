@@ -64,6 +64,9 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 	$scope.commitFilesDiff = '';
 	$scope.loadingCommitsList = false;
 	
+	$scope.listCommitsFromRevision = 'initial';
+	$scope.listCommitsToRevision = 'head';
+	
 	// load commits list
 	$scope.listCommits = function(callbackFn) {
 		$scope.loadingCommitsList = true;
@@ -79,8 +82,8 @@ webApp.controller('HomepageController', ['$scope', '$modal', '$http', '$timeout'
 				login: $scope.connection.login,
 				password: $scope.connection.password,
 				
-				from_revision: 'initial',
-				to_revision: 'head',
+				from_revision: $scope.listCommitsFromRevision,
+				to_revision: $scope.listCommitsToRevision,
 				limit: 20
 			}
 		}).then(function(res) {

@@ -31,8 +31,8 @@ $svnPath = substr($host, $urlPathStartPoint);
 
 $revision = intval($revision);
 $prevRevision = $revision - 1;
-$authentication = '--username=sgchris_yahoo --password=shniWatNeOd3';
-$diffShellCommand = "/usr/bin/svn diff {$authentication} --old={$baseSvnUrl}@{$prevRevision} --new={$baseSvnUrl}@{$revision} {$svnPath} 2>&1";
+$diffShellCommand = "/usr/bin/svn diff {$authenticationArgs} --old={$baseSvnUrl}@{$prevRevision} --new={$baseSvnUrl}@{$revision} {$svnPath} 2>&1";
+echo "\$diffShellCommand = {$diffShellCommand}\n";
 exec($diffShellCommand, $svnDiffOutput);
 $svnDiffOutput = $svnDiffOutput ? implode("\n", $svnDiffOutput) : false;
 

@@ -9,9 +9,12 @@ if (!array_key_exists('svnurl', $_POST) || !array_key_exists('login', $_POST) ||
 }
 
 // get the parameters
-$host = $_POST['svnurl'];
-$login = $_POST['login'];
-$password = $_POST['password'];
+$host = trim($_POST['svnurl']);
+$login = trim($_POST['login']);
+$password = trim($_POST['password']);
+
+// argument for the command line `svn`
+$authenticationArgs = '--username='.$login.' --password='.$password;
 
 // @TODO validate parameters
 

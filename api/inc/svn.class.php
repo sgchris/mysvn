@@ -35,9 +35,9 @@ class SvnClient {
 		$this->password = $password;
 		
 		// get svn info
-		$result = $this->_getSvnInfo();
-		if ($result === false) {
+		if (false === $this->_getSvnInfo()) {
 			$this->lastError = 'Cannot get SVN info';
+			return false;
 		}
 	}
 	
@@ -47,10 +47,11 @@ class SvnClient {
 	 * @param <unknown> $fromRevision 
 	 * @param <unknown> $toRevision 
 	 * @param <unknown> $limit 
-	 * @return  
+	 * @return array
 	 */
 	public function log($path = null, $fromRevision = 0, $toRevision = 'HEAD', $limit = 20) {
-		if ($result === false) {
+		if (false === $this->_getSvnInfo()) {
+			$this->lastError = 'Cannot get SVN info';
 			return false;
 		}
 		
@@ -59,9 +60,9 @@ class SvnClient {
 			$path = $this->svnBaseUrl;
 		}
 		
-		// if no start revision given, take the last 20 commits
+		// if no start revision given, take the last 200 commits
 		if ($fromRevision == 0) {
-			$fromRevision = intval($this->lastRevisionNumber) - 20;
+			$fromRevision = intval($this->lastRevisionNumber) - 200;
 			if ($fromRevision < 0) {
 				$fromRevision = 0;
 			}
@@ -75,9 +76,53 @@ class SvnClient {
 		// prepare and execute the command
 		$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$this->svnUrl;
 		$result = $this->_exec($command);
+		if ($result === false) {
+			return false;
+		}
 		
 		// transform to PHP readable format
 		$result = $this->_svnLogOutputToArray($result);
+		return $result;
+	}
+	
+	/**
+	 * @brief diff two resources
+	 * @param string $path1 
+	 * @param int $revision1 - number or "HEAD"
+	 * @param int $revision2 - number or "HEAD"
+	 * @return string 
+	 */
+	public function diff($path1, $revision1, $revision2) {
+		
+		if (false === $this->_getSvnInfo()) {
+			$this->lastError = 'Cannot get SVN info';
+			return false;
+		}
+		
+		// check the revisions parameter
+		if (strcasecmp($revision1, 'head') == 0) {
+			$revision1 = $this->lastRevisionNumber;
+		}
+		if (strcasecmp($revision2, 'head') == 0) {
+			$revision2 = $this->lastRevisionNumber;
+		}
+		
+		// validate the revisions
+		if (!is_numeric($revision1) || !is_numeric($path2)) {
+			return false;
+		}
+		
+		// fix the paths
+		$path1 = $this->_mergeStrings($this->svnBaseUrl, $path1);
+		$path1 = str_replace($this->svnBaseUrl, '', $path1);
+		
+		// prepare and execute the command
+		$command = SVN_EXECUTABLE.' diff '.$this->_getAuthArguments().
+			' --old '.escapeshellarg($this->svnBaseUrl).'@'.$revision1 .
+			' --new '.escapeshellarg($this->svnBaseUrl).'@'.$revision2 .
+			' '.$path1;
+		
+		$result = $this->_exec($command);
 		return $result;
 	}
 	
@@ -136,11 +181,24 @@ class SvnClient {
 		return $asArray ? $output : implode("\n", $output);
 	}
 	
+	/**
+	 * @brief Merge strings with common part - str1 ending and str2 beginning
+	 * @param string $str1 
+	 * @param string $str2 
+	 * @return string
+	 */
+	protected function _mergeStrings($str1, $str2) {
+		for ($i=1; $i < strlen($str1); $i++) {
+			if (strcasecmp(substr($str1, -1 * $i, $i), substr($str2, 0, $i)) == 0) {
+				return substr($str1, 0, -1 * $i) . $str2;
+			}
+		}
+
+		return $str1 . $str2;
+	}
 	
-		
-		
-		
-		
+	
+	
 	/**
 	 * @brief convert output from 'svn log -v' to array that looks like:
 	 * [{

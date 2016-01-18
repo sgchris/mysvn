@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html id="ng-app" ng-app="MySVN">
+<head>
+	<title>MySVN</title>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/assets/styles/style2.css"/>
+</head>
+<body ng-controller="HomepageController">
+
+	<section id="connection">
+		
+		<a href="javascript:;" ng-click="connection.toggleConnectionBox();" ng-class="{'clicked-down': connection.isOpen}">
+			<i class="fa fa-lg fa-server"></i> Connection
+		</a>
+		
+		<div id="connection-box" ng-show="connection.isOpen">
+			<form ng-submit="connection.connect()">
+				<dl>
+					<dt>Url</dt><dd><input type="text" ng-model="connection.url" placeholder="SVN URL" /></dd>
+					<dt>Login</dt><dd><input type="text" ng-model="connection.login" placeholder="Login" /></dd>
+					<dt>Password</dt><dd><input type="password" ng-model="connection.password" placeholder="Password" /></dd>
+					<dt>&nbsp;</dt>
+					<dd><input type="checkbox" id="connection-store-locally" ng-model="connetion.storeConnection" /> <label for="connection-store-locally">Remember</label></dd>
+					<dt>&nbsp;</dt>
+					<dd>
+						<button type="submit" ng-show="!connection.isConnected">Connect</button>
+						<button type="submit" ng-show="connection.isConnected">Disconnect</button>
+					</dd>
+				</dl>
+			</form>
+		</div>
+		
+	</section>
+
+	<script src="/assets/angular/angular.min.js"></script>
+	<script src="/app2.js"></script>
+	<script src="/controllers/homepage2.js"></script>
+</body>
+</html>
+

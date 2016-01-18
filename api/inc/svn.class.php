@@ -15,8 +15,48 @@ class SvnClient {
 	protected $lastError = '';
 	
 	/**
-	 * @brief 
-	 * @return  
+	 * @param  $svnBaseUrl
+	 * @return \SvnClient
+	 */
+	public function setSvnBaseUrl($svnBaseUrl) {
+		$this->svnBaseUrl = $svnBaseUrl;
+		return $this;
+	}
+	
+	/**
+	 * @return url
+	 */
+	public function getSvnBaseUrl() {
+		return $this->svnBaseUrl;
+	}
+	
+	/**
+	 * @param  $lastRevisionNumber
+	 * @return \SvnClient
+	 */
+	public function setLastRevisionNumber($lastRevisionNumber) {
+		$this->lastRevisionNumber = $lastRevisionNumber;
+		return $this;
+	}
+	
+	/**
+	 * @return int
+	 */
+	public function getLastRevisionNumber() {
+		return $this->lastRevisionNumber;
+	}
+	
+	/**
+	 * @param  $lastError
+	 * @return \SvnClient
+	 */
+	protected function setLastError($lastError) {
+		$this->lastError = $lastError;
+		return $this;
+	}
+	
+	/**
+	 * @return string
 	 */
 	public function getLastError() {
 		return $this->lastError;
@@ -36,8 +76,7 @@ class SvnClient {
 		
 		// get svn info
 		if (false === $this->_getSvnInfo()) {
-			$this->lastError = 'Cannot get SVN info';
-			return false;
+			$this->setLastError('Cannot get SVN info');
 		}
 	}
 	
@@ -51,7 +90,7 @@ class SvnClient {
 	 */
 	public function log($path = null, $fromRevision = 0, $toRevision = 'HEAD', $limit = 20) {
 		if (false === $this->_getSvnInfo()) {
-			$this->lastError = 'Cannot get SVN info';
+			$this->setLastError('Cannot get SVN info');
 			return false;
 		}
 		
@@ -95,7 +134,7 @@ class SvnClient {
 	public function diff($path1, $revision1, $revision2) {
 		
 		if (false === $this->_getSvnInfo()) {
-			$this->lastError = 'Cannot get SVN info';
+			$this->setLastError('Cannot get SVN info');
 			return false;
 		}
 		
@@ -295,8 +334,6 @@ class SvnClient {
 		
 		return $retVal;
 	}
-
-	
 	
 }
 

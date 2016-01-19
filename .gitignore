@@ -7,3 +7,6 @@
 
 # hide file with credentials
 assets/js/svn_cred.js
+
+# hide log files
+*.log

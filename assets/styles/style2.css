@@ -10,8 +10,15 @@ body {
 	font-family: arial, verdana;
 	font-size: 14px;
 	line-height: 20px;
-	
-	padding: 10px;
+}
+
+input[type="text"],
+input[type="password"] {
+	padding: 5px 10px;
+	font-size: 14px;
+	line-height: 20px;
+	border: 1px solid #CCC;
+	border-radius: 3px;
 }
 
 a {
@@ -25,14 +32,27 @@ label:hover,
 	color: rgb(147,176,218);
 }
 
-/* Connection box */
+/* navigation */
 
-#connection {
-	float: right;
+nav {
+	background: #EEE;
+	height: 50px;
+	line-height: 50px;
+	border-bottom: 1px solid #CCC;
 }
+
+nav section {
+	float: left;
+	padding: 0 10px;
+	height: 50px;
+	display: inline-block;
+}
+
+/* Connection box */
 
 #connection #connection-box {
 	padding: 10px;
+	line-height: 24px;
 	
 	position: absolute;
 	z-index: 9999;
@@ -40,7 +60,6 @@ label:hover,
 	background: #EEE;
 	border: 1px solid #CCC;
 	
-	margin-left: -83px;
 	margin-top: 10px;
 }
 	

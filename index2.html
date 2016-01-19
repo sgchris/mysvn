@@ -8,32 +8,43 @@
 </head>
 <body ng-controller="HomepageController">
 
-	<section id="connection">
-		
-		<a href="javascript:;" ng-click="connection.toggleConnectionBox();" ng-class="{'clicked-down': connection.isOpen}">
-			<i class="fa fa-lg fa-server"></i> Connection
-		</a>
-		
-		<div id="connection-box" ng-show="connection.isOpen">
-			<form ng-submit="connection.connect()">
-				<dl>
-					<dt>Url</dt><dd><input type="text" ng-model="connection.url" placeholder="SVN URL" /></dd>
-					<dt>Login</dt><dd><input type="text" ng-model="connection.login" placeholder="Login" /></dd>
-					<dt>Password</dt><dd><input type="password" ng-model="connection.password" placeholder="Password" /></dd>
-					<dt>&nbsp;</dt>
-					<dd><input type="checkbox" id="connection-store-locally" ng-model="connetion.storeConnection" /> <label for="connection-store-locally">Remember</label></dd>
-					<dt>&nbsp;</dt>
-					<dd>
-						<button type="submit" ng-show="!connection.isConnected">Connect</button>
-						<button type="submit" ng-show="connection.isConnected">Disconnect</button>
-					</dd>
-				</dl>
-			</form>
-		</div>
-		
-	</section>
-
+	<nav>
+		<section id="connection">
+			
+			<a href="javascript:;" ng-click="connection.toggleConnectionBox();" ng-class="{'clicked-down': connection.isOpen}">
+				<i class="fa fa-lg fa-server"></i> Connection
+			</a>
+			
+			<div id="connection-box" ng-show="connection.isOpen">
+				<form ng-submit="connection.connect()">
+					<dl>
+						<dt>Url</dt><dd><input type="text" ng-model="connection.url" ng-disabled="connection.isConnected" placeholder="SVN URL" /></dd>
+						<dt>Login</dt><dd><input type="text" ng-model="connection.login" ng-disabled="connection.isConnected" placeholder="Login" /></dd>
+						<dt>Password</dt><dd><input type="password" ng-model="connection.password" ng-disabled="connection.isConnected" placeholder="Password" /></dd>
+						<dt>&nbsp;</dt>
+						<dd><label for="connection-store-locally" title="The connection details will be stored locally unencrypted. Not recommended for public/shared computers."><input type="checkbox" id="connection-store-locally" ng-model="connetion.storeConnection" /> Remember</label></dd>
+						<dt>&nbsp;</dt>
+						<dd>
+							<button type="submit" ng-show="!connection.isConnected && !connection.isConnecting">Connect</button>
+							<button type="submit" ng-show="!connection.isConnected && connection.isConnecting"><i class="fa fa-spinner fa-spin"></i> Connecting</button>
+							<button type="submit" ng-show="connection.isConnected">Disconnect</button>
+						</dd>
+					</dl>
+				</form>
+			</div>
+			
+		</section>
+		<section id="library">
+			<a href="javascript:;"><i class="fa fa-lg fa-file-code-o"></i> Library</a>
+		</section>
+		<section id="github">
+			<a href="javascript:;"><i class="fa fa-lg fa-code-fork"></i></i> Github</a>
+		</section>
+	</nav>
+	
 	<script src="/assets/angular/angular.min.js"></script>
+	<script src="/assets/angular/angular-cookies.min.js"></script>
+	
 	<script src="/app2.js"></script>
 	<script src="/controllers/homepage2.js"></script>
 </body>

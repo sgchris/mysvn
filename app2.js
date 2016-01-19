@@ -1,4 +1,4 @@
-MySVN = angular.module('MySVN', []);
+MySVN = angular.module('MySVN', ['ngCookies']);
 
 // fix web API post requests
 MySVN.config(['$httpProvider', function($httpProvider) {

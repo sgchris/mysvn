@@ -4,6 +4,8 @@ define('SVN_EXECUTABLE', '/usr/bin/svn');
 
 class SvnClient {
 	
+	protected $logEnabled = false;
+	
 	// supplied by user
 	protected $login;
 	protected $password;
@@ -191,13 +193,16 @@ class SvnClient {
 		
 		// parse the result
 		foreach ($result as $row) {
-			$rowExpl = explode(':', $row);
-			$svnInfoKey = strtolower(trim($rowExpl[0]));
-			$svnInfoValue = strtolower(trim($rowExpl[1]));
+			if (($colonPos = strpos($row, ':')) === false) continue;
+			
+			$svnInfoKey = strtolower(trim(substr($row, 0, $colonPos)));
+			$svnInfoValue = strtolower(trim(substr($row, $colonPos + 1)));
 			
 			if ($svnInfoKey == 'revision') {
+				$this->_log("setting last revision number to {$svnInfoValue}");
 				$this->lastRevisionNumber = $svnInfoValue;
 			} elseif ($svnInfoKey == 'repository root') {
+				$this->_log("setting svnBaseUrl to {$svnInfoValue}");
 				$this->svnBaseUrl = $svnInfoValue;
 			}
 		}
@@ -216,6 +221,8 @@ class SvnClient {
 	 * @return array|string 
 	 */
 	protected function _exec($command, $asArray = true) {
+		$this->_log("executing: {$command}");
+		
 		exec($command.' 2>&1', $output);
 		return $asArray ? $output : implode("\n", $output);
 	}
@@ -333,6 +340,20 @@ class SvnClient {
 		}
 		
 		return $retVal;
+	}
+	
+	/**
+	 * @brief add message to the log file. 
+	 * @param string $str 
+	 * @return  
+	 */
+	protected function _log($str) {
+		if (!$this->logEnabled) {
+			return;
+		}
+		
+		$logFile = __FILE__.'.log';
+		@file_put_contents($logFile, date('d.m.Y H:i:s').": {$str}\n", FILE_APPEND);
 	}
 	
 }

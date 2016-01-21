@@ -12,7 +12,18 @@ body {
 	line-height: 20px;
 }
 
+h1,h2,h3,h4,h5,h6 {
+	font-weight: bold;
+	margin: 0;
+}
+
+h1 { font-size: 2.5em; line-height: 2.0em; }
+h2 { font-size: 2.0em; line-height: 2.0em; }
+h3 { font-size: 1.6em; line-height: 1.6em; }
+h4 { font-size: 1.2em; line-height: 1.6em; }
+
 input[type="text"],
+input[type="number"],
 input[type="password"] {
 	padding: 5px 10px;
 	font-size: 14px;
@@ -63,3 +74,16 @@ nav section {
 	margin-top: 10px;
 }
 	
+/* Main area */
+
+#container {
+	padding: 10px;
+}
+
+#commits-list { 
+	width: 40%;
+}
+
+#commits-list-grid {
+	margin-top: 10px;
+}

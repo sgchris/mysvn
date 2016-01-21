@@ -3,7 +3,10 @@
 <head>
 	<title>MySVN</title>
 	<meta charset="UTF-8" />
+	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/assets/ui-grid/ui-grid-stable.min.css"/>
+	<link rel="stylesheet" href="/assets/ui-notification/angular-ui-notification.min.css"/>
 	<link rel="stylesheet" href="/assets/styles/style2.css"/>
 </head>
 <body ng-controller="HomepageController">
@@ -41,9 +44,31 @@
 			<a href="javascript:;"><i class="fa fa-lg fa-code-fork"></i></i> Github</a>
 		</section>
 	</nav>
+	<div id="container">
+		<div id="commits-list">
+			<h2>Commits</h2>
+			<form ng-submit="commits.loadCommitsList()">
+				<span>Display</span> <input type="number" ng-model="commits.commitsLimit" id="commits-limit" placeholder="N"> <span>commits</span>
+				<span>before revision</span> <input type="text" ng-model="commits.commitsTillRevision" id="commits-till-revision" placeholder="&quot;HEAD&quot; or number"></label>
+				
+				<button type="submit" ng-show="!commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-lg fa-list-alt"></i> Load</button>
+				<button type="submit" ng-show="commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
+			</form>
+			<div ui-grid="commits.commitsListGrid" id="commits-list-grid"></div>
+		</div>
+		<div id="modified-files-list">
+		</div>
+	</div>
 	
 	<script src="/assets/angular/angular.min.js"></script>
+	
 	<script src="/assets/angular/angular-cookies.min.js"></script>
+	<script src="/assets/ui-grid/ui-grid-stable.min.js"></script>
+	
+	<script src="/assets/ui-notification/angular-ui-notification.min.js"></script>	
+	
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+	<script src="/assets/js/angular-highlightjs.min.js"></script>
 	
 	<script src="/app2.js"></script>
 	<script src="/controllers/homepage2.js"></script>

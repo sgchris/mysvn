@@ -4,7 +4,7 @@ define('SVN_EXECUTABLE', '/usr/bin/svn');
 
 class SvnClient {
 	
-	protected $logEnabled = false;
+	protected $logEnabled = true;
 	
 	// supplied by user
 	protected $login;
@@ -90,7 +90,7 @@ class SvnClient {
 	 * @param <unknown> $limit 
 	 * @return array
 	 */
-	public function log($path = null, $fromRevision = 0, $toRevision = 'HEAD', $limit = 20) {
+	public function log($path = null, $toRevision = 'HEAD', $limit = 30) {
 		if (false === $this->_getSvnInfo()) {
 			$this->setLastError('Cannot get SVN info');
 			return false;
@@ -101,16 +101,8 @@ class SvnClient {
 			$path = $this->svnBaseUrl;
 		}
 		
-		// if no start revision given, take the last 200 commits
-		if ($fromRevision == 0) {
-			$fromRevision = intval($this->lastRevisionNumber) - 200;
-			if ($fromRevision < 0) {
-				$fromRevision = 0;
-			}
-		}
-		
 		// check the 'toRevision' param. if not given, take the last commit
-		if ($toRevision == 0) {
+		if (strcasecmp($toRevision, 'head') == 0 || !is_numeric($toRevision) || intval($toRevision) <= 0) {
 			$toRevision = $this->lastRevisionNumber;
 		}
 		
@@ -331,7 +323,15 @@ class SvnClient {
 			
 			// gather the modified paths
 			foreach ($output as $modifiedResoruceLine) {
+				if (empty($modifiedResoruceLine)) {
+					continue;
+				}
+				
 				$modifiedResoruceLine = preg_split('%\s+%', trim($modifiedResoruceLine));
+				if (count($modifiedResoruceLine) != 2) {
+					continue;
+				}
+				
 				$retVal['paths'][] = array(
 					'action' => $modifiedResoruceLine[0],
 					'path' => $modifiedResoruceLine[1],

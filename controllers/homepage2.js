@@ -1,4 +1,5 @@
-MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout', 'Notification', function($scope, $http, $cookies, $timeout, Notification) {
+MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout', '$sce', 'Notification', 
+	function($scope, $http, $cookies, $timeout, $sce, Notification) {
 	
 	$scope.connection = {
 		
@@ -12,7 +13,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 		isConnecting: false,
 		
 		// connection box
-		isOpen: false,
+		isOpen: true,
 		toggleConnectionBox: function() {
 			$scope.connection.isOpen = !$scope.connection.isOpen;
 		},
@@ -31,7 +32,12 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 					if ($scope.connection.url && $scope.connection.login && $scope.connection.password) {
 						$scope.connection.connect(function() {
 							// load the latest commits once connected
-							$scope.commits.loadCommitsList();
+							$scope.commits.loadCommitsList(function() {
+								// select the first line
+								if ($scope.commits.commitsListGrid.data[0]) {
+									$scope.commits.rowClicked($scope.commits.commitsListGrid.data[0]);
+								}
+							});
 						});
 					}
 				} catch (e) {
@@ -184,7 +190,14 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 		},
 		
 		rowClicked: function(row) {
+			// set the selected commit
 			$scope.commits.currentCommitRevId = row.rev;
+			
+			// reset the selected modified file
+			$scope.modifiedFiles.currentCommittedFilePath = null;
+			
+			// update the modified files table
+			$scope.modifiedFiles.filesGrid.data = $scope.commits.commitsFiles[row.rev];
 		},
 		
 		currentCommitRevId: null,
@@ -193,7 +206,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 			rowTemplate: '<div ' + 
 				'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
 				'class="ui-grid-cell" ' + 
-				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-commit\': (grid.appScope.commits.currentCommitRevId == row.entity.rev) }" ' + 
+				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-row\': (grid.appScope.commits.currentCommitRevId == row.entity.rev) }" ' + 
 				'ui-grid-cell ' + 
 				'ng-click="grid.appScope.commits.rowClicked(row.entity)"></div>',
 			
@@ -221,6 +234,84 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 		}
 	};
 	
+	$scope.modifiedFiles = {
+		currentCommittedFilePath: null,
+		
+		diffString: '',
+		
+		loadFileDiff: function(filePath, revisionNumber, callbackFn) {
+			// call web API
+			$http({
+				method: 'POST',
+				url: '/api/get_diff.php',
+				data: {
+					url: $scope.connection.baseSvnUrl +  filePath,
+					login: $scope.connection.login,
+					password: $scope.connection.password,
+					
+					revision: revisionNumber,
+				}
+			}).then(function(res) {
+				
+				if (!res || !res.data || !res.data.result) {
+					Notification.error('Error in diff response');
+					return false;
+				}
+				
+				if (res && res.data && res.data.result == 'error') {
+					Notification.error(res.data.error || 'Error getting the diff');
+					return false;
+				}
+				
+				$scope.modifiedFiles.diffString = res.data.diff;
+				
+				// callback parameter
+				if (typeof(callbackFn) == 'function') {
+					callbackFn();
+				}
+				
+			}, function() {
+				Notification.error('mysvn server error :(');
+			}).finally(function() {
+				// stop the spinner
+				// $scope.commits.isLoading = false;
+			});
+		},
+		
+		loadingFileDiff: false,
+		rowClicked: function(row) {
+			$scope.modifiedFiles.currentCommittedFilePath = row.path;
+			
+			if (row.action.toLowerCase() != 'd') {
+				// load the diff
+				$scope.modifiedFiles.loadingFileDiff = true;
+				$scope.modifiedFiles.loadFileDiff(row.path, $scope.commits.currentCommitRevId, function() {
+					$scope.modifiedFiles.loadingFileDiff = false;
+				});
+			}
+		},
+		
+		// the modified files grid
+		filesGrid: {
+			rowTemplate: '<div ' + 
+				'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
+				'class="ui-grid-cell" ' + 
+				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-row\': (grid.appScope.modifiedFiles.currentCommittedFilePath == row.entity.path) }" ' + 
+				'ui-grid-cell ' + 
+				'ng-click="grid.appScope.modifiedFiles.rowClicked(row.entity)"></div>',
+			
+			columnDefs: [{
+				name: 'action',
+				displayName: 'Modified files',
+				width: '100%',
+				cellTemplate: '<span class="cell-value-wrapper">{{row.entity.action | fullActionName}} <span class="modified-file-path">{{row.entity.path}}</span></span>'
+			}],
+			
+			data: []
+		}
+		
+	}
+	
 }]);
 
 
@@ -244,4 +335,16 @@ MySVN.filter('svnDateFilter', function() {
 		var d = dd + '.' + mm + '.' + yyyy + ' ' + hh + ':' + mi + ' (' + dow[d.getDay()] + ')';
 		return d;
 	}
-})
+});
+
+MySVN.filter('fullActionName', function() {
+	return function(val) {
+		var map = {
+			'a': 'ADD',
+			'm': 'MOD',
+			'd': 'DEL'
+		}
+		
+		return map[val.toLowerCase()] || val;
+	};
+});

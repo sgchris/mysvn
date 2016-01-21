@@ -11,42 +11,30 @@
  * {"result":"error","error":"error info"}
  */
 
+
 // init the request 
 require_once __DIR__ . '/inc/config.php';
-// get extra parameters
-if (isset($_POST['revision']) && is_numeric($_POST['revision'])) {
-	$revision = $_POST['revision'];
-} else {
-	// get the latest (HEAD) revision number using svn_log
-	$fromRevision = SVN_REVISION_INITIAL;
-	$toRevision = SVN_REVISION_HEAD;
-	$limit = 1;
 
-	// list the commits
-	$result = svn_log($host, $fromRevision, $toRevision, $limit);
-}
-
-$baseSvnUrl = getSvnBaseUrl($host, $urlPathStartPoint);
-$svnPath = substr($host, $urlPathStartPoint);
-
-$revision = intval($revision);
-$prevRevision = $revision - 1;
-$diffShellCommand = "/usr/bin/svn diff {$authenticationArgs} --old={$baseSvnUrl}@{$prevRevision} --new={$baseSvnUrl}@{$revision} {$svnPath} 2>&1";
-
-exec($diffShellCommand, $svnDiffOutput);
-$svnDiffOutput = $svnDiffOutput ? implode("\n", $svnDiffOutput) : false;
-
-if (empty($svnDiffOutput)) {
+$svn = new SvnClient($url, $login, $password);
+if (($lastError = $svn->getLastError()) != '') {
 	die(json_encode(array(
 		'result' => 'error',
-		'error' => 'cannot get diff',
+		'error' => $lastError,
 	)));
-} 
+}
+
+$revision1 = isset($_POST['revision']) && is_numeric($_POST['revision']) && $_POST['revision'] > 0 ? intval($_POST['revision']) : $svn->getLastRevisionNumber();
+$revision2 = $revision1 - 1;
+
+$diff = $svn->diff($url, $revision2, $revision1);
+if ($diff === false) {
+	die(json_encode(array(
+		'result' => 'error',
+		'error' => $svn->getLastError(),
+	)));
+}
 
 die(json_encode(array(
 	'result' => 'ok',
-	'diff' => $svnDiffOutput,
+	'diff' => implode("\n", $diff),
 )));
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

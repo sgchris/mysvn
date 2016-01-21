@@ -110,6 +110,7 @@ class SvnClient {
 		$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$this->svnUrl;
 		$result = $this->_exec($command);
 		if ($result === false) {
+			$this->setLastError('cannot execute command');
 			return false;
 		}
 		
@@ -141,7 +142,8 @@ class SvnClient {
 		}
 		
 		// validate the revisions
-		if (!is_numeric($revision1) || !is_numeric($path2)) {
+		if (!is_numeric($revision1) || !is_numeric($revision2)) {
+			$this->setLastError('revision number error');
 			return false;
 		}
 		

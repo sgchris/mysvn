@@ -24,13 +24,15 @@ h4 { font-size: 1.2em; line-height: 1.6em; }
 
 input[type="text"],
 input[type="number"],
-input[type="password"] {
-	padding: 5px 10px;
+input[type="password"]
+{
+	padding: 2px 5px;
 	font-size: 14px;
-	line-height: 20px;
+	line-height: 18px;
 	border: 1px solid #CCC;
 	border-radius: 3px;
 }
+
 
 a {
 	text-decoration: none;
@@ -59,33 +61,80 @@ nav section {
 	display: inline-block;
 }
 
+nav input[type="text"],
+nav input[type="number"],
+nav input[type="password"] {
+	padding: 5px 10px;
+	font-size: 14px;
+	line-height: 20px;
+	border: 1px solid #CCC;
+	border-radius: 3px;
+	width: 95%;
+}
+
 /* Connection box */
 
+#connection #connection-box-curtain {
+    background: #FFF;
+	opacity: 0.9;
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+	
 #connection #connection-box {
-	padding: 10px;
-	line-height: 24px;
+    background: #EEE;
+	box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    padding: 10px;
+    line-height: 24px;
+    border: 1px solid #CCC;
 	
-	position: absolute;
-	z-index: 9999;
+    position: fixed;
+    z-index: 9999;
 	
-	background: #EEE;
-	border: 1px solid #CCC;
+    top: 20%;
+    bottom: 20%;
+    left: 30%;
+    right: 30%;
 	
-	margin-top: 10px;
+	min-height: 285px;
+	max-height: 285px;
 }
 	
 /* Main area */
 
 #container {
 	padding: 10px;
+	overflow: hidden;
 }
 
 #commits-list { 
 	width: 40%;
+	margin-right: 0.5%;
+	float: left;
+}
+#commits-toolbar {
+	overflow: hidden;
+}
+#commits-list h2 {
+	display: inline-block;
+}
+#commits-list form { 
+	float: right;
+	margin-top: 1.5em;
+}
+#commits-list form input#commits-limit { 
+	width: 50px;
+}
+#commits-list form button[type="submit"] { 
+	width: 100px;
+	text-align: center;
 }
 
 #commits-list-grid {
-	margin-top: 10px;
 	height: 700px;
 }
 
@@ -96,6 +145,44 @@ nav section {
 	background: #DDD;
 }
 
-.ui-grid-row .ui-grid-cell.selected-commit {
+.ui-grid-row .ui-grid-cell.selected-row {
 	background: #9CF;
+}
+
+#modified-files-list {
+	float: left;
+	width: 25%;
+	margin-right: 0.5%;
+}
+
+#modified-file-diff {
+	float: left;
+	width: 34%;
+}
+
+#modified-file-content-curtain {
+	background: #FFF;
+	opacity: 0.8;
+	position : absolute;
+	z-index: 90;
+}
+#modified-file-content-spinner {
+	position: absolute;
+	z-index: 91;
+	text-align: center;
+	color: #000;
+}
+#modified-file-content {
+	font-family: consolas, monospace;
+	border: 1px solid #CCC;
+	box-sizing: border-box;
+	overflow: auto;
+}
+
+.cell-value-wrapper {
+	line-height: 30px;
+	padding: 0 5px;
+}
+.modified-file-path {
+	color: #666;
 }

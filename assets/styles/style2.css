@@ -86,4 +86,16 @@ nav section {
 
 #commits-list-grid {
 	margin-top: 10px;
+	height: 700px;
+}
+
+.ui-grid-row .ui-grid-cell {
+	cursor: pointer;
+}
+.ui-grid-row:hover .ui-grid-cell {
+	background: #DDD;
+}
+
+.ui-grid-row .ui-grid-cell.selected-commit {
+	background: #9CF;
 }

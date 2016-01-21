@@ -26,6 +26,14 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 					$scope.connection.url = storedConnection.url;
 					$scope.connection.login = storedConnection.login;
 					$scope.connection.password = storedConnection.password;
+					
+					// connect immediately if credentials supplied
+					if ($scope.connection.url && $scope.connection.login && $scope.connection.password) {
+						$scope.connection.connect(function() {
+							// load the latest commits once connected
+							$scope.commits.loadCommitsList();
+						});
+					}
 				} catch (e) {
 					console.error('cannot load stored connection data', e);
 				}
@@ -52,7 +60,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 		lastRevisionNumber: 0,
 		
 		// connection callback
-		connect: function() {
+		connect: function(callbackFn) {
 			if ($scope.connection.isConnected) {
 				// disconnect
 				$scope.connection.lastRevisionNumber = '';
@@ -88,6 +96,10 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 							$timeout(function() {
 								$scope.connection.isOpen = false;
 							}, 1000);
+							
+							if (typeof(callbackFn) == 'function') {
+								callbackFn();
+							}
 						}
 					}).finally(function() {
 						$scope.connection.isConnecting = false;
@@ -118,6 +130,10 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 				return;
 			}
 			
+			if ($scope.commits.isLoading) {
+				return;
+			}
+			
 			$scope.commits.isLoading = true;
 			
 			// call web API
@@ -128,9 +144,8 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 					url: $scope.connection.url,
 					login: $scope.connection.login,
 					password: $scope.connection.password,
-					
-					to_revision: $scope.commitsTillRevision,
-					limit: $scope.commitsLimit
+					to_revision: $scope.commits.commitsTillRevision,
+					limit: $scope.commits.commitsLimit
 				}
 			}).then(function(res) {
 				if (!res || !res.data || !res.data.commits) {
@@ -169,7 +184,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 		},
 		
 		rowClicked: function(row) {
-			console.log('row clicked', row);
+			$scope.commits.currentCommitRevId = row.rev;
 		},
 		
 		currentCommitRevId: null,
@@ -178,7 +193,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 			rowTemplate: '<div ' + 
 				'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
 				'class="ui-grid-cell" ' + 
-				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-commit\': (grid.appScope.commits.currentCommitRevId == row.rev) }" ' + 
+				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-commit\': (grid.appScope.commits.currentCommitRevId == row.entity.rev) }" ' + 
 				'ui-grid-cell ' + 
 				'ng-click="grid.appScope.commits.rowClicked(row.entity)"></div>',
 			

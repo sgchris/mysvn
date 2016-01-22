@@ -1,7 +1,5 @@
-MySVN = angular.module('MySVN', ['ngCookies', 'ui.grid', 'ui-notification', 'hljs']);
-
-// fix web API post requests
-MySVN.config(['$httpProvider', function($httpProvider) {
+webApp = angular.module('WebApp', ['ngRoute', 'ui.bootstrap', 'ui.grid', 'ui-notification', 'hljs']);
+webApp.config(['$httpProvider', function($httpProvider) {
 	
 	// Use x-www-form-urlencoded Content-Type
 	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
@@ -48,3 +46,14 @@ MySVN.config(['$httpProvider', function($httpProvider) {
 	
 }]);
 
+webApp.config(['$routeProvider', function($routeProvider) {
+	$routeProvider.
+		when('/about', {
+			templateUrl: '/views/about.html',
+			controller: function(){}
+		}).
+		otherwise({
+			templateUrl: '/views/homepage.html',
+			controller: 'HomepageController'
+		});
+}]);

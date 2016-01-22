@@ -1,61 +1,113 @@
 <!DOCTYPE html>
-<html id="ng-app" ng-app="WebApp">
+<html id="ng-app" ng-app="MySVN">
 <head>
-	<title>Angular Bootstrap Boilerplate</title>
+	<title>MySVN</title>
 	<meta charset="UTF-8" />
-	<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css"/>
-	<link rel="stylesheet" href="/assets/styles/style.css"/>
 	
-	<!-- 3rd party modules -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/assets/ui-grid/ui-grid-stable.min.css"/>
-	<!-- https://github.com/alexcrack/angular-ui-notification -->
 	<link rel="stylesheet" href="/assets/ui-notification/angular-ui-notification.min.css"/>
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/github.min.css">
+	
+	<link rel="stylesheet" href="/assets/styles/style.css"/>
 </head>
 <body ng-controller="HomepageController">
 
-	<nav class="navbar navbar-default">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#/">MySVN</a>
+	<nav>
+		<section id="connection">
+			
+			<a href="javascript:;" ng-click="connection.toggleConnectionBox();" ng-class="{'clicked-down': connection.isOpen}">
+				<i class="fa fa-lg fa-server"></i> Connection
+			</a>
+			<div id="connection-box-curtain" ng-show="connection.isOpen" ng-click="connection.isOpen = false;"></div>
+			<div id="connection-box" ng-show="connection.isOpen">
+				<form ng-submit="connection.connect()">
+					<dl>
+						<dt>Url</dt><dd><input type="text" ng-model="connection.url" ng-disabled="connection.isConnected || connection.isConnecting" placeholder="SVN URL" /></dd>
+						<dt>Login</dt><dd><input type="text" ng-model="connection.login" ng-disabled="connection.isConnected || connection.isConnecting" placeholder="Login" /></dd>
+						<dt>Password</dt><dd><input type="password" ng-model="connection.password" ng-disabled="connection.isConnected || connection.isConnecting" placeholder="Password" /></dd>
+						<dt>&nbsp;</dt>
+						<dd><label for="connection-store-locally" title="The connection details will be stored locally unencrypted. Not recommended for public/shared computers."><input type="checkbox" id="connection-store-locally" ng-model="connetion.storeConnection" /> Remember</label></dd>
+						<dt>&nbsp;</dt>
+						<dd>
+							<button type="submit" ng-show="!connection.isConnected && !connection.isConnecting">Connect</button>
+							<button type="submit" ng-show="!connection.isConnected && connection.isConnecting"><i class="fa fa-spinner fa-spin"></i> Connecting</button>
+							<button type="submit" ng-show="connection.isConnected">Disconnect</button>
+							<button type="button" ng-click="connection.isOpen = false;">Close</button>
+						</dd>
+					</dl>
+				</form>
 			</div>
-			<div id="navbar" class="navbar-collapse collapse navbar-right">
-				<!--
-				<ul class="nav navbar-nav">
-					<li><a href="javascript:;" ng-click="setCredentials();">Connect</a></li>
-				</ul>
-				-->
-			</div><!--/.nav-collapse -->
-		</div>
+			
+		</section>
+		<section id="library">
+			<a href="javascript:;"><i class="fa fa-lg fa-file-code-o"></i> Library</a>
+		</section>
+		<section id="github">
+			<a href="javascript:;"><i class="fa fa-lg fa-code-fork"></i></i> Github</a>
+		</section>
 	</nav>
-
-	<div id="pageContent">
-		<div class="container">
-			<div ng-view></div>
+	<div id="container">
+		<div id="commits-list">
+			<div id="commits-toolbar">
+				<h2>Commits</h2>
+				<form ng-submit="commits.loadCommitsList()">
+					<span>Display</span> <input type="number" ng-model="commits.commitsLimit" id="commits-limit" placeholder="N"> <span>commits</span>
+					<span>before revision</span> <input type="text" ng-model="commits.commitsTillRevision" id="commits-till-revision" placeholder="&quot;HEAD&quot; or number"></label>
+					
+					<button type="submit" ng-show="!commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-lg fa-list-alt"></i> Load</button>
+					<button type="submit" ng-show="commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
+				</form>
+			</div>
+			<div ui-grid="commits.commitsListGrid" id="commits-list-grid"></div>
+		</div>
+		<div id="modified-files-list">
+			<h2>Modified files list</h2>
+			<div ui-grid="modifiedFiles.filesGrid" id="files-grid"></div>
+		</div>
+		<div id="modified-file-diff">
+			<h2>Diff</h2>
+			<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff"></div>
+			<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+			<div id="modified-file-content" hljs source="modifiedFiles.diffString"></div>
 		</div>
 	</div>
-
-	<script src="/assets/js/jquery-2.1.4.min.js"></script>
+	
+	<script>
+		// fix heights
+		var fixHeights = function() {
+			var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+			var panelsHeight = (h - 150) + 'px';
+			document.getElementById('commits-list-grid').style.height = panelsHeight;
+			document.getElementById('files-grid').style.height = panelsHeight;
+			document.getElementById('modified-file-content').style.height = panelsHeight;
+			
+			document.getElementById('modified-file-content-curtain').style.height = panelsHeight;
+			document.getElementById('modified-file-content-spinner').style.height = panelsHeight;
+			document.getElementById('modified-file-content-spinner').style.lineHeight = panelsHeight;
+			
+			document.getElementById('modified-file-content-curtain').style.width = document.getElementById('modified-file-content').offsetWidth + 'px';
+			document.getElementById('modified-file-content-spinner').style.width = document.getElementById('modified-file-content').offsetWidth + 'px';
+			
+			
+		};
+		
+		fixHeights();
+		window.addEventListener('resize', fixHeights);
+	</script>
 	<script src="/assets/angular/angular.min.js"></script>
-	<script src="/assets/angular/angular-route.min.js"></script>
-	<script src="/assets/js/angular-local-storage.js"></script>
-	<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
-	<script src="/assets/js/ui-bootstrap-tpls-0.13.0.min.js"></script>
-	<!-- 3rd party modules -->
+	
+	<script src="/assets/angular/angular-cookies.min.js"></script>
 	<script src="/assets/ui-grid/ui-grid-stable.min.js"></script>
-	<script src="/assets/ui-notification/angular-ui-notification.min.js"></script>
+	
+	<script src="/assets/ui-notification/angular-ui-notification.min.js"></script>	
 	
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
 	<script src="/assets/js/angular-highlightjs.min.js"></script>
 	
-	<script>window.BASE_PATH = '/';</script>
 	<script src="/app.js"></script>
-	<script src="/assets/js/svn_cred.js"></script>
 	<script src="/controllers/homepage.js"></script>
+	
 </body>
 </html>
+

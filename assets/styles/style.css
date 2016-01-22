@@ -1,7 +1,189 @@
-.lorem {
-  text-align: justify;
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
+
+/* * * * * * * * * * * * * * * * * * * */
+
+body {
+	font-family: arial, verdana;
+	font-size: 14px;
+	line-height: 20px;
 }
 
-.ui-grid-row {
+h1,h2,h3,h4,h5,h6 {
+	font-weight: bold;
+	margin: 0;
+}
+
+h1 { font-size: 2.5em; line-height: 2.0em; }
+h2 { font-size: 2.0em; line-height: 2.0em; }
+h3 { font-size: 1.6em; line-height: 1.6em; }
+h4 { font-size: 1.2em; line-height: 1.6em; }
+
+input[type="text"],
+input[type="number"],
+input[type="password"]
+{
+	padding: 2px 5px;
+	font-size: 14px;
+	line-height: 18px;
+	border: 1px solid #CCC;
+	border-radius: 3px;
+}
+
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+a:hover, a:active, 
+label:hover,
+.clicked-down {
+	color: rgb(147,176,218);
+}
+
+/* navigation */
+
+nav {
+	background: #EEE;
+	height: 50px;
+	line-height: 50px;
+	border-bottom: 1px solid #CCC;
+}
+
+nav section {
+	float: left;
+	padding: 0 10px;
+	height: 50px;
+	display: inline-block;
+}
+
+nav input[type="text"],
+nav input[type="number"],
+nav input[type="password"] {
+	padding: 5px 10px;
+	font-size: 14px;
+	line-height: 20px;
+	border: 1px solid #CCC;
+	border-radius: 3px;
+	width: 95%;
+}
+
+/* Connection box */
+
+#connection #connection-box-curtain {
+    background: #FFF;
+	opacity: 0.9;
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+	
+#connection #connection-box {
+    background: #EEE;
+	box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    padding: 10px;
+    line-height: 24px;
+    border: 1px solid #CCC;
+	
+    position: fixed;
+    z-index: 9999;
+	
+    top: 20%;
+    bottom: 20%;
+    left: 30%;
+    right: 30%;
+	
+	min-height: 285px;
+	max-height: 285px;
+}
+	
+/* Main area */
+
+#container {
+	padding: 10px;
+	overflow: hidden;
+}
+
+#commits-list { 
+	width: 40%;
+	margin-right: 0.5%;
+	float: left;
+}
+#commits-toolbar {
+	overflow: hidden;
+}
+#commits-list h2 {
+	display: inline-block;
+}
+#commits-list form { 
+	float: right;
+	margin-top: 1.5em;
+}
+#commits-list form input#commits-limit { 
+	width: 50px;
+}
+#commits-list form button[type="submit"] { 
+	width: 100px;
+	text-align: center;
+}
+
+#commits-list-grid {
+	height: 700px;
+}
+
+.ui-grid-row .ui-grid-cell {
 	cursor: pointer;
+}
+.ui-grid-row:hover .ui-grid-cell {
+	background: #DDD;
+}
+
+.ui-grid-row .ui-grid-cell.selected-row {
+	background: #9CF;
+}
+
+#modified-files-list {
+	float: left;
+	width: 25%;
+	margin-right: 0.5%;
+}
+
+#modified-file-diff {
+	float: left;
+	width: 34%;
+}
+
+#modified-file-content-curtain {
+	background: #FFF;
+	opacity: 0.8;
+	position : absolute;
+	z-index: 90;
+}
+#modified-file-content-spinner {
+	position: absolute;
+	z-index: 91;
+	text-align: center;
+	color: #000;
+}
+#modified-file-content {
+	font-family: consola, monospace;
+	font-size: 13px;
+	border: 1px solid #CCC;
+	box-sizing: border-box;
+	overflow: auto;
+}
+
+.cell-value-wrapper {
+	line-height: 30px;
+	padding: 0 5px;
+}
+.modified-file-path {
+	color: #666;
 }

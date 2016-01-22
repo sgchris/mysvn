@@ -33,6 +33,10 @@ input[type="password"]
 	border-radius: 3px;
 }
 
+strong {
+	font-weight: bold;
+	color: #000;
+}
 
 a {
 	text-decoration: none;
@@ -43,6 +47,12 @@ a:hover, a:active,
 label:hover,
 .clicked-down {
 	color: rgb(147,176,218);
+}
+
+/* highlight.js */
+.hljs {
+	overflow: initial;
+	background: initial;
 }
 
 /* navigation */
@@ -59,6 +69,11 @@ nav section {
 	padding: 0 10px;
 	height: 50px;
 	display: inline-block;
+}
+
+nav section#connection-info {
+	float: right;
+	color: #666;
 }
 
 nav input[type="text"],
@@ -134,6 +149,21 @@ nav input[type="password"] {
 	text-align: center;
 }
 
+#commits-list-grid-curtain {
+	background: #FFF;
+	opacity: 0.8;
+	position : absolute;
+	z-index: 90;
+}
+	
+#commits-list-grid-spinner {
+	position: absolute;
+	z-index: 91;
+	text-align: center;
+	color: #000;
+}
+
+
 #commits-list-grid {
 	height: 700px;
 }
@@ -173,11 +203,13 @@ nav input[type="password"] {
 	color: #000;
 }
 #modified-file-content {
+	box-sizing: border-box;
 	font-family: consola, monospace;
 	font-size: 13px;
 	border: 1px solid #CCC;
 	box-sizing: border-box;
 	overflow: auto;
+	background: #f8f8f8;
 }
 
 .cell-value-wrapper {

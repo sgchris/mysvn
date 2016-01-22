@@ -14,6 +14,9 @@
 <body ng-controller="HomepageController">
 
 	<nav>
+		<section id="connection-info" ng-show="connection.isConnected">
+			Connected to <strong>{{connection.url | hostNameFromURL}}</strong>. HEAD revision <strong>#{{connection.lastRevisionNumber}}</strong>
+		</section>
 		<section id="connection">
 			
 			<a href="javascript:;" ng-click="connection.toggleConnectionBox();" ng-class="{'clicked-down': connection.isOpen}">
@@ -40,11 +43,8 @@
 			</div>
 			
 		</section>
-		<section id="library">
-			<a href="javascript:;"><i class="fa fa-lg fa-file-code-o"></i> Library</a>
-		</section>
 		<section id="github">
-			<a href="javascript:;"><i class="fa fa-lg fa-code-fork"></i></i> Github</a>
+			<a href="https://github.com/sgchris/mysvn" target="_blank"><i class="fa fa-lg fa-code-fork"></i></i> Github</a>
 		</section>
 	</nav>
 	<div id="container">
@@ -59,6 +59,8 @@
 					<button type="submit" ng-show="commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
 				</form>
 			</div>
+			<div id="commits-list-grid-curtain" ng-show="commits.isLoading"></div>
+			<div id="commits-list-grid-spinner" ng-show="commits.isLoading"><i class="fa fa-spinner fa-spin"></i> Loading</div>
 			<div ui-grid="commits.commitsListGrid" id="commits-list-grid"></div>
 		</div>
 		<div id="modified-files-list">
@@ -78,18 +80,29 @@
 		var fixHeights = function() {
 			var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 			var panelsHeight = (h - 150) + 'px';
+			
+			// commits grid
 			document.getElementById('commits-list-grid').style.height = panelsHeight;
+			
+			// spinner for the commits grid
+			document.getElementById('commits-list-grid-curtain').style.height = panelsHeight;
+			document.getElementById('commits-list-grid-spinner').style.height = panelsHeight;			
+			document.getElementById('commits-list-grid-spinner').style.lineHeight = panelsHeight;
+			document.getElementById('commits-list-grid-curtain').style.width = document.getElementById('commits-list-grid').offsetWidth + 'px';
+			document.getElementById('commits-list-grid-spinner').style.width = document.getElementById('commits-list-grid').offsetWidth + 'px';
+			
+			// files grid
 			document.getElementById('files-grid').style.height = panelsHeight;
+			
+			// diff
 			document.getElementById('modified-file-content').style.height = panelsHeight;
 			
+			// spinner for the diff
 			document.getElementById('modified-file-content-curtain').style.height = panelsHeight;
 			document.getElementById('modified-file-content-spinner').style.height = panelsHeight;
 			document.getElementById('modified-file-content-spinner').style.lineHeight = panelsHeight;
-			
 			document.getElementById('modified-file-content-curtain').style.width = document.getElementById('modified-file-content').offsetWidth + 'px';
 			document.getElementById('modified-file-content-spinner').style.width = document.getElementById('modified-file-content').offsetWidth + 'px';
-			
-			
 		};
 		
 		fixHeights();

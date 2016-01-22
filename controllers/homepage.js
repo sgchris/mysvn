@@ -30,15 +30,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 					
 					// connect immediately if credentials supplied
 					if ($scope.connection.url && $scope.connection.login && $scope.connection.password) {
-						$scope.connection.connect(function() {
-							// load the latest commits once connected
-							$scope.commits.loadCommitsList(function() {
-								// select the first line
-								if ($scope.commits.commitsListGrid.data[0]) {
-									$scope.commits.rowClicked($scope.commits.commitsListGrid.data[0]);
-								}
-							});
-						});
+						$scope.connection.connect();
 					}
 				} catch (e) {
 					console.error('cannot load stored connection data', e);
@@ -73,6 +65,10 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 				$scope.connection.baseSvnUrl = '';
 				
 				$scope.connection.isConnected = false;
+				
+				// clear the tables
+				$scope.commits.deinit();
+				$scope.modifiedFiles.deinit();
 			} else {
 				
 				if ($scope.connection.url.length > 0 && 
@@ -94,6 +90,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 					}).success(function(res) {
 						if (res.result == 'ok') {
 							$scope.connection.lastRevisionNumber = res.lastRevisionNumber;
+							$scope.commits.commitsTillRevision = res.lastRevisionNumber;
 							$scope.connection.baseSvnUrl = res.baseUrl;
 							
 							$scope.connection.isConnected = true;
@@ -101,7 +98,15 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 							// hide the connection box
 							$timeout(function() {
 								$scope.connection.isOpen = false;
-							}, 1000);
+							}, 500);
+							
+							// load the latest commits once connected
+							$scope.commits.loadCommitsList(function() {
+								// select the first line
+								if ($scope.commits.commitsListGrid.data[0]) {
+									$scope.commits.rowClicked($scope.commits.commitsListGrid.data[0]);
+								}
+							});
 							
 							if (typeof(callbackFn) == 'function') {
 								callbackFn();
@@ -231,6 +236,16 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 			}],
 			
 			data: []
+			
+		},
+		
+		deinit: function() {
+			$scope.commits.commitsListGrid.data = [];
+			$scope.commits.currentCommitRevId = null;
+			$scope.commits.commitsTillRevision = 'HEAD';
+			
+			$scope.commits.commitsFiles = {};
+			$scope.commits.commitsLimit = 30;
 		}
 	};
 	
@@ -280,6 +295,16 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 		
 		loadingFileDiff: false,
 		rowClicked: function(row) {
+			// skip, if clicked already selected file
+			if (row.path == $scope.modifiedFiles.currentCommittedFilePath) {
+				return;
+			}
+			
+			// skip, if loading in progress
+			if ($scope.modifiedFiles.loadingFileDiff == true) {
+				return;
+			}
+			
 			$scope.modifiedFiles.currentCommittedFilePath = row.path;
 			
 			if (row.action.toLowerCase() != 'd') {
@@ -308,6 +333,13 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 			}],
 			
 			data: []
+		},
+		
+		deinit: function() {
+			$scope.modifiedFiles.filesGrid.data = [];
+			$scope.modifiedFiles.currentCommittedFilePath = null;
+			
+			$scope.modifiedFiles.diffString = '';
 		}
 		
 	}
@@ -346,5 +378,13 @@ MySVN.filter('fullActionName', function() {
 		}
 		
 		return map[val.toLowerCase()] || val;
+	};
+});
+
+// get host name from URL
+MySVN.filter('hostNameFromURL', function() {
+	return function(val) {
+		var res = /https?:\/\/(.*?)\//i.exec(val);
+		return res && res[1] ? res[1] : val;
 	};
 });

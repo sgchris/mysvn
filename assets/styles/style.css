@@ -87,13 +87,50 @@ nav input[type="password"] {
 	width: 95%;
 }
 
+nav #connection-dialog-url {
+	width: calc(95% - 82px);
+}
+
+/* repo-browser box */
+
+#repo-browser-curtain {
+	background: #FFF;
+	opacity: 0.8;
+	
+	position : fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 150;
+}
+
+
+#repo-browser-box {
+	overflow: auto;
+	
+	padding: 10px;
+	border: 1px solid #CCC;
+	box-shadow: 0 0 10px rgba(0,0,0,0.3);
+	background: #FFF;
+	opacity: 0.8;
+
+	position : fixed;
+	top: 10%;
+	bottom: 10%;
+	
+	right: 30%;
+	left: 30%;
+	z-index: 151;	
+}
+
 /* Connection box */
 
 #connection #connection-box-curtain {
     background: #FFF;
 	opacity: 0.9;
     position: fixed;
-    z-index: 9998;
+    z-index: 110;
     top: 0;
     bottom: 0;
     left: 0;
@@ -108,7 +145,7 @@ nav input[type="password"] {
     border: 1px solid #CCC;
 	
     position: fixed;
-    z-index: 9999;
+    z-index: 111;
 	
     top: 20%;
     bottom: 20%;

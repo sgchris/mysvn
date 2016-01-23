@@ -123,6 +123,41 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 	// load initial state (from cookies)
 	$scope.connection.loadLocallyStoredCredentials();
 	
+	///////////////////////////////////////////// repo browser ////////////////////////////////////////
+	
+	
+	$scope.repoBrowser = {
+		isOpen: true,
+		
+		// open the repo browser box
+		open: function() {
+			$scope.repoBrowser.isOpen = true;
+		},
+		
+		// when clicked "select" in the box
+		selectFolder: function() {
+			
+		},
+		
+		// the grid itself
+		filesTreeGrid: {
+			columnDefs: [{
+				name: 'file',
+				displayName: 'Files tree',
+				width: '100%',
+				cellTemplate: '<span ng-bind-html="row.entity[col.name] | repoBrowserFileFilter:row.entity"></span>',
+			}],
+			
+			data: [{
+				file: 'one',
+			}, {
+				file: 'two',
+			}, {
+				file: 'three',
+			}],
+		}
+	};
+	
 	///////////////////////////////////////////// commits /////////////////////////////////////////////
 	
 	$scope.commits = {
@@ -387,3 +422,15 @@ MySVN.filter('hostNameFromURL', function() {
 		return res && res[1] ? res[1] : val;
 	};
 });
+MySVN.filter('repoBrowserFileFilter', ['$sce', function($sce) {
+	return function(val, rec) {
+		var treeLevel = rec.$$treeLevel || 0;
+		var indentationPrefix = '<i class="fa fa-chevron-right"></i> '.repeat(treeLevel);
+		
+		var chevronPrefix = (rec.type == 'folder') ? 
+			'<i class="fa fa-chevron-right"></i>' : 
+			'<i class="fa fa-chevron-right" style="visibility: hidden;"></i>';
+		
+		return $sce.trustAsHtml(indentationPrefix + chevronPrefix + val);
+	}
+}]);

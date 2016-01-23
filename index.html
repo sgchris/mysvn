@@ -26,20 +26,39 @@
 			<div id="connection-box" ng-show="connection.isOpen">
 				<form ng-submit="connection.connect()">
 					<dl>
-						<dt>Url</dt><dd><input type="text" ng-model="connection.url" ng-disabled="connection.isConnected || connection.isConnecting" placeholder="SVN URL" /></dd>
+						<dt>Url</dt>
+						<dd>
+							<input type="text" ng-model="connection.url" id="connection-dialog-url" 
+								ng-disabled="connection.isConnected || connection.isConnecting" placeholder="SVN URL" />
+							<button type="button" id="repo-browser-browse-btn" ng-disabled="connection.isConnected || connection.isConnecting" 
+								ng-click="repoBrowser.open()"><i class="fa fa-folder-open-o"></i> Browse</button>
+						</dd>
 						<dt>Login</dt><dd><input type="text" ng-model="connection.login" ng-disabled="connection.isConnected || connection.isConnecting" placeholder="Login" /></dd>
 						<dt>Password</dt><dd><input type="password" ng-model="connection.password" ng-disabled="connection.isConnected || connection.isConnecting" placeholder="Password" /></dd>
 						<dt>&nbsp;</dt>
 						<dd><label for="connection-store-locally" title="The connection details will be stored locally unencrypted. Not recommended for public/shared computers."><input type="checkbox" id="connection-store-locally" ng-model="connetion.storeConnection" /> Remember</label></dd>
 						<dt>&nbsp;</dt>
 						<dd>
-							<button type="submit" ng-show="!connection.isConnected && !connection.isConnecting">Connect</button>
+							<button type="submit" ng-show="!connection.isConnected && !connection.isConnecting"><i class="fa fa-plug"></i> Connect</button>
 							<button type="submit" ng-show="!connection.isConnected && connection.isConnecting"><i class="fa fa-spinner fa-spin"></i> Connecting</button>
-							<button type="submit" ng-show="connection.isConnected">Disconnect</button>
-							<button type="button" ng-click="connection.isOpen = false;">Close</button>
+							<button type="submit" ng-show="connection.isConnected"><i class="fa fa-sign-out"></i> Disconnect</button>
+							<button type="button" ng-click="connection.isOpen = false;"><i class="fa fa-times"></i> Close</button>
 						</dd>
 					</dl>
 				</form>
+			</div>
+			
+			<div id="repo-browser-curtain" ng-show="repoBrowser.isOpen" ng-click="repoBrowser.isOpen = false;"></div>
+			<div id="repo-browser-box" ng-show="repoBrowser.isOpen">
+				<h2>Repo browser</h2>
+				<div>
+					<input type="text" ng-model="repoBrowser.currentUrl" />
+				</div>
+				<div ui-grid="repoBrowser.filesTreeGrid" style="height: 300px;"></div>
+				<div>
+					<button id="repo-browser-ok-button" ng-click="repoBrowser.selectFolder();">Select folder</button>
+					<button id="repo-browser-cancel-button" ng-click="repoBrowser.isOpen = false;">Cancel</button>
+				</div>
 			</div>
 			
 		</section>

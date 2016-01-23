@@ -144,6 +144,9 @@ nav input[type="password"] {
 #commits-list form input#commits-limit { 
 	width: 50px;
 }
+#commits-list form input#commits-till-revision { 
+	width: 80px;
+}
 #commits-list form button[type="submit"] { 
 	width: 100px;
 	text-align: center;

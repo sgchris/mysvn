@@ -107,7 +107,7 @@ class SvnClient {
 		}
 		
 		// prepare and execute the command
-		$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$this->svnUrl;
+		$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$this->svnUrl.'@'.$toRevision;
 		$result = $this->_exec($command);
 		if ($result === false) {
 			$this->setLastError('cannot execute command');

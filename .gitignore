@@ -10,3 +10,6 @@ assets/js/svn_cred.js
 
 # hide log files
 *.log
+
+# skip the cache
+api/cache

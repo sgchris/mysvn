@@ -1,0 +1,3 @@
+[submodule "api/inc/Simple-PHP-Cache"]
+	path = api/inc/Simple-PHP-Cache
+	url = https://github.com/cosenary/Simple-PHP-Cache.git

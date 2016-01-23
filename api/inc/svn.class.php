@@ -2,6 +2,8 @@
 
 define('SVN_EXECUTABLE', '/usr/bin/svn');
 
+require(__DIR__.DS.'Simple-PHP-Cache'.DS.'cache.class.php');
+
 class SvnClient {
 	
 	protected $logEnabled = true;
@@ -82,6 +84,21 @@ class SvnClient {
 		}
 	}
 	
+	/* @var Cache */
+	protected $_cacheObject = null;
+	
+	/**
+	 * @brief get cache object
+	 * @return Cache
+	 */
+	protected function _getCacheObject() {
+		if (is_null($this->_cacheObject)) {
+			$this->_cacheObject = new Cache;
+		}
+		
+		return $this->_cacheObject;
+	}
+	
 	/**
 	 * @brief Get the svn log (commits list with modified resources)
 	 * @param <unknown> $path 
@@ -106,16 +123,23 @@ class SvnClient {
 			$toRevision = $this->lastRevisionNumber;
 		}
 		
-		// prepare and execute the command
-		$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$this->svnUrl.'@'.$toRevision;
-		$result = $this->_exec($command);
-		if ($result === false) {
-			$this->setLastError('cannot execute command');
-			return false;
+		$cacheKey = 'log_'.rawurlencode($path .'_'. $toRevision .'_'. $limit);
+		
+		if (null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+			// prepare and execute the command
+			$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$this->svnUrl.'@'.$toRevision;
+			$result = $this->_exec($command);
+			if ($result === false) {
+				$this->setLastError('cannot execute command');
+				return false;
+			}
+			
+			$this->_getCacheObject()->store($cacheKey, $result);
 		}
 		
 		// transform to PHP readable format
 		$result = $this->_svnLogOutputToArray($result);
+		
 		return $result;
 	}
 	
@@ -151,13 +175,19 @@ class SvnClient {
 		$path1 = $this->_mergeStrings($this->svnBaseUrl, $path1);
 		$path1 = str_replace($this->svnBaseUrl, '', $path1);
 		
-		// prepare and execute the command
-		$command = SVN_EXECUTABLE.' diff '.$this->_getAuthArguments().
-			' --old '.escapeshellarg($this->svnBaseUrl).'@'.$revision1 .
-			' --new '.escapeshellarg($this->svnBaseUrl).'@'.$revision2 .
-			' '.$path1;
-		
-		$result = $this->_exec($command);
+		// check if the result was cached
+		$cacheKey = 'diff_'.rawurlencode($path1 .'_'. $revision1 .'_'. $revision2);
+		if (null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+			// prepare and execute the command
+			$command = SVN_EXECUTABLE.' diff '.$this->_getAuthArguments().
+				' --old '.escapeshellarg($this->svnBaseUrl).'@'.$revision1 .
+				' --new '.escapeshellarg($this->svnBaseUrl).'@'.$revision2 .
+				' '.$path1;
+			
+			$result = $this->_exec($command);
+			
+			$this->_getCacheObject()->store($cacheKey, $result);
+		}
 		return $result;
 	}
 	
@@ -181,9 +211,14 @@ class SvnClient {
 			return;
 		}
 		
-		// get SVN info
-		$command = SVN_EXECUTABLE.' info '.($this->_getAuthArguments()).' '.$this->svnUrl;
-		$result = $this->_exec($command);
+		// get SVN info. check if it's cached first
+		$cacheKey = 'svninfo_'.rawurlencode($this->svnUrl);
+		if (null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+			$command = SVN_EXECUTABLE.' info '.($this->_getAuthArguments()).' '.$this->svnUrl;
+			$result = $this->_exec($command);
+			
+			$this->_getCacheObject()->store($cacheKey, $result);
+		}
 		
 		// parse the result
 		foreach ($result as $row) {
@@ -359,9 +394,3 @@ class SvnClient {
 	}
 	
 }
-
-
-
-
-
-

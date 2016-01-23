@@ -255,6 +255,8 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 		diffString: '',
 		
 		loadFileDiff: function(filePath, revisionNumber, callbackFn) {
+			$scope.modifiedFiles.loadingFileDiff = true;
+			
 			// call web API
 			$http({
 				method: 'POST',
@@ -289,7 +291,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 				Notification.error('mysvn server error :(');
 			}).finally(function() {
 				// stop the spinner
-				// $scope.commits.isLoading = false;
+				$scope.modifiedFiles.loadingFileDiff = false;
 			});
 		},
 		
@@ -307,12 +309,9 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 			
 			$scope.modifiedFiles.currentCommittedFilePath = row.path;
 			
+			// load the diff
 			if (row.action.toLowerCase() != 'd') {
-				// load the diff
-				$scope.modifiedFiles.loadingFileDiff = true;
-				$scope.modifiedFiles.loadFileDiff(row.path, $scope.commits.currentCommitRevId, function() {
-					$scope.modifiedFiles.loadingFileDiff = false;
-				});
+				$scope.modifiedFiles.loadFileDiff(row.path, $scope.commits.currentCommitRevId);
 			}
 		},
 		

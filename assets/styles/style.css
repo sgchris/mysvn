@@ -255,6 +255,8 @@ nav #connection-dialog-url {
 .cell-value-wrapper {
 	line-height: 30px;
 	padding: 0 5px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 .modified-file-path {
 	color: #666;

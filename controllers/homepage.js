@@ -363,7 +363,7 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 				name: 'action',
 				displayName: 'Modified files',
 				width: '100%',
-				cellTemplate: '<span class="cell-value-wrapper">{{row.entity.action | fullActionName}} <span class="modified-file-path">{{row.entity.path}}</span></span>'
+				cellTemplate: '<span class="cell-value-wrapper" title="{{row.entity.path}}">{{row.entity.action | fullActionName}} <span class="modified-file-path">{{row.entity.path}}</span></span>'
 			}],
 			
 			data: []

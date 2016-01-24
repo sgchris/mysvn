@@ -7,6 +7,7 @@ require(__DIR__.DS.'Simple-PHP-Cache'.DS.'cache.class.php');
 class SvnClient {
 	
 	protected $logEnabled = true;
+	protected $cacheEnabled = true;
 	
 	// supplied by user
 	protected $login;
@@ -115,19 +116,19 @@ class SvnClient {
 		
 		// check the path. If not given, take the base SVN URL
 		if (is_null($path)) {
-			$path = $this->svnBaseUrl;
+			$path = $this->getSvnBaseUrl();
 		}
 		
 		// check the 'toRevision' param. if not given, take the last commit
 		if (strcasecmp($toRevision, 'head') == 0 || !is_numeric($toRevision) || intval($toRevision) <= 0) {
-			$toRevision = $this->lastRevisionNumber;
+			$toRevision = $this->getLastRevisionNumber();
 		}
 		
 		$cacheKey = 'log_'.rawurlencode($path .'_'. $toRevision .'_'. $limit);
 		
-		if (null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+		if (!$this->cacheEnabled || null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
 			// prepare and execute the command
-			$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$this->svnUrl.'@'.$toRevision;
+			$command = SVN_EXECUTABLE.' log -v '.$this->_getAuthArguments().' -l '.$limit.' '.$path.'@'.$toRevision;
 			$result = $this->_exec($command);
 			if ($result === false) {
 				$this->setLastError('cannot execute command');
@@ -172,16 +173,16 @@ class SvnClient {
 		}
 		
 		// fix the paths
-		$path1 = $this->_mergeStrings($this->svnBaseUrl, $path1);
-		$path1 = str_replace($this->svnBaseUrl, '', $path1);
+		$path1 = $this->_mergeStrings($this->getSvnBaseUrl(), $path1);
+		$path1 = str_replace($this->getSvnBaseUrl(), '', $path1);
 		
 		// check if the result was cached
 		$cacheKey = 'diff_'.rawurlencode($path1 .'_'. $revision1 .'_'. $revision2);
-		if (null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+		if (!$this->cacheEnabled || null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
 			// prepare and execute the command
 			$command = SVN_EXECUTABLE.' diff '.$this->_getAuthArguments().
-				' --old '.escapeshellarg($this->svnBaseUrl).'@'.$revision1 .
-				' --new '.escapeshellarg($this->svnBaseUrl).'@'.$revision2 .
+				' --old '.escapeshellarg($this->getSvnBaseUrl()).'@'.$revision1 .
+				' --new '.escapeshellarg($this->getSvnBaseUrl()).'@'.$revision2 .
 				' '.$path1;
 			
 			$result = $this->_exec($command);
@@ -207,13 +208,13 @@ class SvnClient {
 	 */
 	protected function _getSvnInfo() {
 		// check if already loaded
-		if (!is_null($this->svnBaseUrl) && !is_null($this->lastRevisionNumber)) {
+		if (!is_null($this->getSvnBaseUrl()) && !is_null($this->getLastRevisionNumber())) {
 			return;
 		}
 		
 		// get SVN info. check if it's cached first
 		$cacheKey = 'svninfo_'.rawurlencode($this->svnUrl);
-		if (null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+		if (!$this->cacheEnabled || null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
 			$command = SVN_EXECUTABLE.' info '.($this->_getAuthArguments()).' '.$this->svnUrl;
 			$result = $this->_exec($command);
 			
@@ -224,19 +225,19 @@ class SvnClient {
 		foreach ($result as $row) {
 			if (($colonPos = strpos($row, ':')) === false) continue;
 			
-			$svnInfoKey = strtolower(trim(substr($row, 0, $colonPos)));
-			$svnInfoValue = strtolower(trim(substr($row, $colonPos + 1)));
+			$svnInfoKey = trim(substr($row, 0, $colonPos));
+			$svnInfoValue = trim(substr($row, $colonPos + 1));
 			
-			if ($svnInfoKey == 'revision') {
+			if ($svnInfoKey == 'Revision') {
 				$this->_log("setting last revision number to {$svnInfoValue}");
-				$this->lastRevisionNumber = $svnInfoValue;
-			} elseif ($svnInfoKey == 'repository root') {
+				$this->setLastRevisionNumber($svnInfoValue);
+			} elseif ($svnInfoKey == 'Repository Root') {
 				$this->_log("setting svnBaseUrl to {$svnInfoValue}");
-				$this->svnBaseUrl = $svnInfoValue;
+				$this->setSvnBaseUrl($svnInfoValue);
 			}
 		}
 		
-		if (is_null($this->svnBaseUrl)) {
+		if (is_null($this->getSvnBaseUrl())) {
 			return false;
 		}
 		
@@ -250,9 +251,12 @@ class SvnClient {
 	 * @return array|string 
 	 */
 	protected function _exec($command, $asArray = true) {
-		$this->_log("executing: {$command}");
 		
 		exec($command.' 2>&1', $output);
+		
+		// log the operation
+		$this->_log("Executing \"{$command}\"");
+		
 		return $asArray ? $output : implode("\n", $output);
 	}
 	

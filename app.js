@@ -68,3 +68,21 @@ MySVN.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
 			templateUrl: '/views/repo-browser.html'
 		});
 }]);
+
+
+MySVN.run(['$rootScope', function($rootScope) {
+	console.log('run function');
+	
+	$rootScope.getWindowHeight = function() {
+		return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+	};
+	
+	$rootScope.fixHeights = function() {
+		var h = $rootScope.getWindowHeight();
+		$rootScope.panelHeight = (h - 150) + 'px';
+	};
+	
+	// watch window height, and fix heights of the panels
+	$rootScope.$watch($rootScope.getWindowHeight, $rootScope.fixHeights);
+	
+}]);

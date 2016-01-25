@@ -47,20 +47,6 @@
 					</dl>
 				</form>
 			</div>
-			
-			<div id="repo-browser-curtain" ng-show="repoBrowser.isOpen" ng-click="repoBrowser.isOpen = false;"></div>
-			<div id="repo-browser-box" ng-show="repoBrowser.isOpen">
-				<h2>Repo browser</h2>
-				<div>
-					<input type="text" ng-model="repoBrowser.currentUrl" />
-				</div>
-				<div ui-grid="repoBrowser.filesTreeGrid" style="height: 300px;"></div>
-				<div>
-					<button id="repo-browser-ok-button" ng-click="repoBrowser.selectFolder();">Select folder</button>
-					<button id="repo-browser-cancel-button" ng-click="repoBrowser.isOpen = false;">Cancel</button>
-				</div>
-			</div>
-			
 		</section>
 		<section id="github">
 			<a href="https://github.com/sgchris/mysvn" target="_blank"><i class="fa fa-lg fa-code-fork"></i></i> Github</a>
@@ -73,6 +59,7 @@
 	<script>
 		// fix heights
 		var fixHeights = function() {
+			return;
 			var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 			var panelsHeight = (h - 150) + 'px';
 			

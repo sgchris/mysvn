@@ -123,41 +123,6 @@ MySVN.controller('HomepageController', ['$scope', '$http', '$cookies', '$timeout
 	// load initial state (from cookies)
 	$scope.connection.loadLocallyStoredCredentials();
 	
-	///////////////////////////////////////////// repo browser ////////////////////////////////////////
-	
-	
-	$scope.repoBrowser = {
-		isOpen: true,
-		
-		// open the repo browser box
-		open: function() {
-			$scope.repoBrowser.isOpen = true;
-		},
-		
-		// when clicked "select" in the box
-		selectFolder: function() {
-			
-		},
-		
-		// the grid itself
-		filesTreeGrid: {
-			columnDefs: [{
-				name: 'file',
-				displayName: 'Files tree',
-				width: '100%',
-				cellTemplate: '<span ng-bind-html="row.entity[col.name] | repoBrowserFileFilter:row.entity"></span>',
-			}],
-			
-			data: [{
-				file: 'one',
-			}, {
-				file: 'two',
-			}, {
-				file: 'three',
-			}],
-		}
-	};
-	
 	///////////////////////////////////////////// commits /////////////////////////////////////////////
 	
 	$scope.commits = {

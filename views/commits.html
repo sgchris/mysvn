@@ -1,0 +1,25 @@
+<div id="commits-list">
+	<div id="commits-toolbar">
+		<h2>Commits</h2>
+		<form ng-submit="commits.loadCommitsList()">
+			<span>Display</span> <input type="number" ng-model="commits.commitsLimit" id="commits-limit" placeholder="N"> <span>commits</span>
+			<span>before revision</span> <input type="text" ng-model="commits.commitsTillRevision" id="commits-till-revision" placeholder="&quot;HEAD&quot; or number"></label>
+			
+			<button type="submit" ng-show="!commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-lg fa-list-alt"></i> Load</button>
+			<button type="submit" ng-show="commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
+		</form>
+	</div>
+	<div id="commits-list-grid-curtain" ng-show="commits.isLoading"></div>
+	<div id="commits-list-grid-spinner" ng-show="commits.isLoading"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+	<div ui-grid="commits.commitsListGrid" id="commits-list-grid"></div>
+</div>
+<div id="modified-files-list">
+	<h2>Modified files list</h2>
+	<div ui-grid="modifiedFiles.filesGrid" id="files-grid"></div>
+</div>
+<div id="modified-file-diff">
+	<h2>Diff</h2>
+	<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff"></div>
+	<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+	<div id="modified-file-content" hljs source="modifiedFiles.diffString"></div>
+</div>

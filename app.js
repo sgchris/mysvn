@@ -1,8 +1,8 @@
-MySVN = angular.module('MySVN', ['ngCookies', 'ui.grid', 'ui-notification', 'hljs']);
+MySVN = angular.module('MySVN', ['ui.router', 'ngCookies', 'ui.grid', 'ui-notification', 'hljs']);
 
 // fix web API post requests
 MySVN.config(['$httpProvider', function($httpProvider) {
-	
+	console.log('config1');
 	// Use x-www-form-urlencoded Content-Type
 	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 
@@ -48,3 +48,23 @@ MySVN.config(['$httpProvider', function($httpProvider) {
 	
 }]);
 
+// define the routing
+MySVN.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+	$urlRouterProvider.otherwise("/commits");
+	
+	$stateProvider
+		.state('home', {
+			url: '/',
+			redirectTo: '/commits'
+		})
+		.state('commits', {
+			url: '/commits',
+			controller: 'HomepageController',
+			templateUrl: '/views/commits.html'
+		})
+		.state('repo-browser', {
+			url: '/repo-browser',
+			controller: 'RepoBrowserController',
+			templateUrl: '/views/repo-browser.html'
+		});
+}]);

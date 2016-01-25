@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/assets/ui-grid/ui-grid-stable.min.css"/>
 	<link rel="stylesheet" href="/assets/ui-notification/angular-ui-notification.min.css"/>
-	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/github.min.css">
+	<link rel="stylesheet" type="text/css" href="/assets/styles/github.min.css">
 	
 	<link rel="stylesheet" href="/assets/styles/style.css"/>
 </head>
@@ -67,31 +67,7 @@
 		</section>
 	</nav>
 	<div id="container">
-		<div id="commits-list">
-			<div id="commits-toolbar">
-				<h2>Commits</h2>
-				<form ng-submit="commits.loadCommitsList()">
-					<span>Display</span> <input type="number" ng-model="commits.commitsLimit" id="commits-limit" placeholder="N"> <span>commits</span>
-					<span>before revision</span> <input type="text" ng-model="commits.commitsTillRevision" id="commits-till-revision" placeholder="&quot;HEAD&quot; or number"></label>
-					
-					<button type="submit" ng-show="!commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-lg fa-list-alt"></i> Load</button>
-					<button type="submit" ng-show="commits.isLoading" ng-disabled="!connection.isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
-				</form>
-			</div>
-			<div id="commits-list-grid-curtain" ng-show="commits.isLoading"></div>
-			<div id="commits-list-grid-spinner" ng-show="commits.isLoading"><i class="fa fa-spinner fa-spin"></i> Loading</div>
-			<div ui-grid="commits.commitsListGrid" id="commits-list-grid"></div>
-		</div>
-		<div id="modified-files-list">
-			<h2>Modified files list</h2>
-			<div ui-grid="modifiedFiles.filesGrid" id="files-grid"></div>
-		</div>
-		<div id="modified-file-diff">
-			<h2>Diff</h2>
-			<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff"></div>
-			<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff"><i class="fa fa-spinner fa-spin"></i> Loading</div>
-			<div id="modified-file-content" hljs source="modifiedFiles.diffString"></div>
-		</div>
+		<div ui-view></div>
 	</div>
 	
 	<script>
@@ -128,17 +104,17 @@
 		window.addEventListener('resize', fixHeights);
 	</script>
 	<script src="/assets/angular/angular.min.js"></script>
-	
 	<script src="/assets/angular/angular-cookies.min.js"></script>
+	<script src="/assets/angular/angular-ui-router.min.js"></script>
+	
 	<script src="/assets/ui-grid/ui-grid-stable.min.js"></script>
-	
 	<script src="/assets/ui-notification/angular-ui-notification.min.js"></script>	
-	
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
 	<script src="/assets/js/angular-highlightjs.min.js"></script>
 	
 	<script src="/app.js"></script>
 	<script src="/controllers/homepage.js"></script>
+	<script src="/controllers/repo-browser.js"></script>
 	
 </body>
 </html>

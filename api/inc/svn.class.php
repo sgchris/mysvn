@@ -135,7 +135,7 @@ class SvnClient {
 				return false;
 			}
 			
-			$this->_getCacheObject()->store($cacheKey, $result);
+			$this->_getCacheObject()->store($cacheKey, $result, 60); // expire in one minute
 		}
 		
 		// transform to PHP readable format

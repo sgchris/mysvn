@@ -59,7 +59,7 @@ MySVN.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
 		})
 		.state('commits', {
 			url: '/commits',
-			controller: 'HomepageController',
+			controller: 'CommitsController',
 			templateUrl: '/views/commits.html'
 		})
 		.state('repo-browser', {
@@ -71,7 +71,9 @@ MySVN.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $
 
 
 MySVN.run(['$rootScope', function($rootScope) {
-	console.log('run function');
+	
+	// define root scope variables
+	$rootScope.commitsTillRevision = 0;
 	
 	$rootScope.getWindowHeight = function() {
 		return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);

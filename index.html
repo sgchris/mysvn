@@ -10,12 +10,16 @@
 	<link rel="stylesheet" type="text/css" href="/assets/styles/github.min.css">
 	
 	<link rel="stylesheet" href="/assets/styles/style.css"/>
+	<link rel="stylesheet" href="/assets/styles/repo-browser-styles.css"/>
 </head>
-<body ng-controller="HomepageController">
+<body>
 
-	<nav>
-		<section id="connection-info" ng-show="connection.isConnected">
+	<nav ng-controller="ConnectionController">
+		<section id="connection-info" ng-show="connection.isConnected" class="status-connected">
 			Connected to <strong>{{connection.url | hostNameFromURL}}</strong>. HEAD revision <strong>#{{connection.lastRevisionNumber}}</strong>
+		</section>
+		<section id="connection-info" ng-show="!connection.isConnected" class="status-disconnected">
+			Disconnected
 		</section>
 		<section id="connection">
 			
@@ -50,6 +54,15 @@
 		</section>
 		<section id="github">
 			<a href="https://github.com/sgchris/mysvn" target="_blank"><i class="fa fa-lg fa-code-fork"></i></i> Github</a>
+		</section>
+		
+		<section id="nav-page-commits" ui-sref-active="nav-page-active">
+			<a href ui-sref="commits"><i class="fa fa-lg fa-code-fork"></i></i> Commits</a>
+		</section>
+		
+		<section id="nav-page-repo-browser" ui-sref-active="nav-page-active">
+			<!--<a href="#/repo-browser" ><i class="fa fa-lg fa-code-fork"></i></i> Repo-Browser</a>-->
+			<a href ui-sref="repo-browser"><i class="fa fa-lg fa-code-fork"></i></i> Repo-Browser</a>
 		</section>
 	</nav>
 	<div id="container">
@@ -100,7 +113,8 @@
 	<script src="/assets/js/angular-highlightjs.min.js"></script>
 	
 	<script src="/app.js"></script>
-	<script src="/controllers/homepage.js"></script>
+	<script src="/controllers/connection.js"></script>
+	<script src="/controllers/commits.js"></script>
 	<script src="/controllers/repo-browser.js"></script>
 	
 </body>

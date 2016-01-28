@@ -1,16 +1,16 @@
-<div id="repo-browser-url-wrapper">
-	<form>
-		<input type="text" placeholder="http://path.to/svn/url" />
-		<input type="text" placeholder="Rev number or &quot;HEAD&quot;" />
-		<button><i class="fa fa-exit"></i> Go</button>
-	</form>
-</div>
 <div id="panels-wrapper">
-	<div id="files-tree-panel" class="panel">
+	<div id="files-tree-panel" class="panel" style="height:{{panelHeight}}">
 		<h2>Files</h2>
+		<div id="repo-browser-url-wrapper">
+			<form>
+				<input type="text" name="path" ng-model="path" placeholder="http://path.to/svn/url" />
+				<input type="text" name="revision" ng-model="revision" placeholder="Rev number or &quot;HEAD&quot;" />
+				<button><i class="fa fa-exit"></i> Go</button>
+			</form>
+		</div>
 		<div xxx-ui-grid="filesTree.grid"></div>
 	</div>
-	<div id="file-content-panel" class="panel">
+	<div id="file-content-panel" class="panel" style="height:{{panelHeight}}">
 		<h2>Modified files list</h2>
 		<div id="file-content-toolbar">
 			<a href="javascript:;">Content</a>
@@ -18,7 +18,7 @@
 		</div>
 		<div xxx-ng-bind-html="fileContent.content"></div>
 	</div>
-	<div id="file-revisions-panel" class="panel">
+	<div id="file-revisions-panel" class="panel" style="height:{{panelHeight}}">
 		<h2>Revisions</h2>
 		<div xxx-ui-grid="revisions.grid"></div>
 	</div>

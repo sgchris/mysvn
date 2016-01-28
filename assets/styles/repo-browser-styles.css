@@ -1,0 +1,31 @@
+
+.panel {
+	float: left;
+	box-sizing: border-box;
+}
+
+#repo-browser-url-wrapper {
+	padding: 0 0 5px 0;
+}
+
+#repo-browser-url-wrapper input[name="path"] {
+	width: 60%;
+}
+
+#repo-browser-url-wrapper input[name="revision"] {
+	width: 20%;
+}
+
+#files-tree-panel {
+	width: 24.5%;
+	margin-right: 0.5%;
+}
+
+#file-content-panel {
+	width: 49.5%;
+	margin-right: 0.5%;
+}
+
+#file-revisions-panel {
+	width: 25%;
+}

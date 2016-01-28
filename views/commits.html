@@ -1,4 +1,4 @@
-<div id="commits-list" class="panel">
+<div id="commits-list">
 	<div id="commits-toolbar">
 		<h2>Commits</h2>
 		<form ng-submit="commits.loadCommitsList()">
@@ -13,11 +13,11 @@
 	<div id="commits-list-grid-spinner" ng-show="commits.isLoading" style="height:{{panelHeight}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
 	<div ui-grid="commits.commitsListGrid" id="commits-list-grid" style="height:{{panelHeight}}"></div>
 </div>
-<div id="modified-files-list" class="panel">
+<div id="modified-files-list">
 	<h2>Modified files list</h2>
 	<div ui-grid="modifiedFiles.filesGrid" id="files-grid" style="height:{{panelHeight}}"></div>
 </div>
-<div id="modified-file-diff" class="panel">
+<div id="modified-file-diff">
 	<h2>Diff</h2>
 	<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}"></div>
 	<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>

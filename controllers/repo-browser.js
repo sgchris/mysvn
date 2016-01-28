@@ -1,3 +1,7 @@
 MySVN.controller('RepoBrowserController', ['$scope', '$http', function($scope, $http) {
-	console.log('repoBrowser controller');
+	
+	$scope.path = '/';
+	$scope.revision = '123';
+	
+	
 }]);

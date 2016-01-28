@@ -55,6 +55,10 @@ label:hover,
 	background: initial;
 }
 
+.ui-grid-row .ui-grid-cell {
+	white-space: nowrap;
+}
+
 /* navigation */
 
 nav {
@@ -76,6 +80,17 @@ nav section#connection-info {
 	color: #666;
 }
 
+nav section#connection-info.status-connected,
+nav section#connection-info.status-connected strong {
+	background-color: #B5D4F3;
+}
+nav section#connection-info.status-disconnected {
+	color: #C11;
+}
+nav section.nav-page-active {
+	background: #B5D4F3;
+}
+
 nav input[type="text"],
 nav input[type="number"],
 nav input[type="password"] {
@@ -90,6 +105,7 @@ nav input[type="password"] {
 nav #connection-dialog-url {
 	width: calc(95% - 82px);
 }
+
 
 /* repo-browser box */
 
@@ -216,7 +232,7 @@ nav #connection-dialog-url {
 }
 
 .ui-grid-row .ui-grid-cell.selected-row {
-	background: #9CF;
+	background: #B5D4F3;
 }
 
 #modified-files-list {

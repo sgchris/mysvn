@@ -1,15 +1,18 @@
 MySVN.controller('ConnectionController', ['$scope', '$rootScope', '$state', '$http', '$cookies', '$timeout', '$sce', 'Notification', 
 	function($scope, $rootScope, $state, $http, $cookies, $timeout, $sce, Notification) {
 	
+	$rootScope.isConnected = false,
+	$rootScope.lastRevisionNumber = '';
+	$rootScope.baseSvnUrl = '';
+	
+	// user provided data
+	$rootScope.url = '',
+	$rootScope.login = '',
+	$rootScope.password = '',
+	
 	$scope.connection = {
 		
-		// user provided data
-		url: '',
-		login: '',
-		password: '',
-		
 		// status
-		isConnected: false,
 		isConnecting: false,
 		
 		// connection box
@@ -24,12 +27,13 @@ MySVN.controller('ConnectionController', ['$scope', '$rootScope', '$state', '$ht
 			if (storedConnection) {
 				try {
 					storedConnection = JSON.parse(storedConnection);
-					$scope.connection.url = storedConnection.url;
-					$scope.connection.login = storedConnection.login;
-					$scope.connection.password = storedConnection.password;
 					
 					// connect immediately if credentials supplied
-					if ($scope.connection.url && $scope.connection.login && $scope.connection.password) {
+					if (storedConnection.url && storedConnection.login && storedConnection.password) {
+						$rootScope.url = storedConnection.url;
+						$rootScope.login = storedConnection.login;
+						$rootScope.password = storedConnection.password;
+					
 						$scope.connection.connect();
 					}
 				} catch (e) {
@@ -40,9 +44,9 @@ MySVN.controller('ConnectionController', ['$scope', '$rootScope', '$state', '$ht
 		
 		store: function() {
 			var connectionObjectJSON = JSON.stringify({
-				url: $scope.connection.url,
-				login: $scope.connection.login,
-				password: $scope.connection.password
+				url: $scope.url,
+				login: $scope.login,
+				password: $scope.password
 			});
 			
 			var expireDate = new Date();
@@ -57,65 +61,47 @@ MySVN.controller('ConnectionController', ['$scope', '$rootScope', '$state', '$ht
 		baseSvnUrl: '',
 		lastRevisionNumber: 0,
 		
-		// connection callback
+		// dis/connection callback
 		connect: function(callbackFn) {
-			if ($scope.connection.isConnected) {
+			if ($scope.isConnected) {
 				// disconnect
-				$scope.connection.lastRevisionNumber = '';
-				$scope.connection.baseSvnUrl = '';
+				$rootScope.lastRevisionNumber = '';
+				$rootScope.baseSvnUrl = '';
 				
-				$scope.connection.isConnected = false;
+				$rootScope.isConnected = false;
 				
-				// clear the tables
-				//$scope.commits.deinit();
-				//$scope.modifiedFiles.deinit();
 			} else {
+				// store the connection date locally
+				$scope.connection.store();
 				
-				if ($scope.connection.url.length > 0 && 
-					$scope.connection.login.length > 0 && 
-					$scope.connection.password.length > 0
-				) {
-					// store the connection date locally
-					$scope.connection.store();
-					
-					$scope.connection.isConnecting = true;
-					$http({
-						method: 'POST',
-						url: '/api/get_info.php',
-						data: {
-							url: $scope.connection.url,
-							login: $scope.connection.login,
-							password: $scope.connection.password,
+				$scope.connection.isConnecting = true;
+				$http({
+					method: 'POST',
+					url: '/api/get_info.php',
+					data: {
+						url: $scope.url,
+						login: $scope.login,
+						password: $scope.password,
+					}
+				}).success(function(res) {
+					if (res.result == 'ok') {
+						$rootScope.lastRevisionNumber = res.lastRevisionNumber;
+						$rootScope.baseSvnUrl = res.baseUrl;
+						
+						$rootScope.isConnected = true;
+						
+						// hide the connection box
+						$timeout(function() {
+							$scope.connection.isOpen = false;
+						}, 500);
+						
+						if (typeof(callbackFn) == 'function') {
+							callbackFn();
 						}
-					}).success(function(res) {
-						if (res.result == 'ok') {
-							$scope.connection.lastRevisionNumber = res.lastRevisionNumber;
-							$rootScope.commitsTillRevision = res.lastRevisionNumber;
-							$scope.connection.baseSvnUrl = res.baseUrl;
-							
-							$scope.connection.isConnected = true;
-							
-							// hide the connection box
-							$timeout(function() {
-								$scope.connection.isOpen = false;
-							}, 500);
-							
-							// load the latest commits once connected
-							$scope.commits.loadCommitsList(function() {
-								// select the first line
-								if ($scope.commits.commitsListGrid.data[0]) {
-									$scope.commits.rowClicked($scope.commits.commitsListGrid.data[0]);
-								}
-							});
-							
-							if (typeof(callbackFn) == 'function') {
-								callbackFn();
-							}
-						}
-					}).finally(function() {
-						$scope.connection.isConnecting = false;
-					});
-				}
+					}
+				}).finally(function() {
+					$scope.connection.isConnecting = false;
+				});
 			}
 		}
 	};

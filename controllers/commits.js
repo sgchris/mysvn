@@ -13,7 +13,7 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 		
 		// load the list according to the data in the inputs
 		loadCommitsList: function(callbackFn) {
-			if (!$scope.connection.isConnected) {
+			if (!$scope.isConnected) {
 				return;
 			}
 			
@@ -28,9 +28,9 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 				method: 'POST',
 				url: '/api/list_commits.php',
 				data: {
-					url: $scope.connection.url,
-					login: $scope.connection.login,
-					password: $scope.connection.password,
+					url: $scope.url,
+					login: $scope.login,
+					password: $scope.password,
 					to_revision: $scope.commits.commitsTillRevision,
 					limit: $scope.commits.commitsLimit
 				}
@@ -139,9 +139,9 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 				method: 'POST',
 				url: '/api/get_diff.php',
 				data: {
-					url: $scope.connection.baseSvnUrl +  filePath,
-					login: $scope.connection.login,
-					password: $scope.connection.password,
+					url: $scope.baseSvnUrl +  filePath,
+					login: $scope.login,
+					password: $scope.password,
 					
 					revision: revisionNumber,
 				}
@@ -220,12 +220,31 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 		
 	}
 	
+	$scope.$watch('isConnected', function(isConnected) {
+		if (!isConnected) {
+			// disconnected
+			$scope.commits.deinit();
+			$scope.modifiedFiles.deinit();
+		} else {
+			// connected
+			// load the latest commits once connected
+			$scope.commits.loadCommitsList(function() {
+				
+				$scope.commits.commitsTillRevision = $scope.lastRevisionNumber;
+				
+				// select the first line
+				if ($scope.commits.commitsListGrid.data[0]) {
+					$scope.commits.rowClicked($scope.commits.commitsListGrid.data[0]);
+				}
+			});
+		}
+	});
+	
 }]);
 
 MySVN.filter('nowrap', function() {
 	return function(rawStr) {
 		rawStr = rawStr.replace(/[\n\r]/g, '');
-		console.log('rawStr', rawStr);
 		return rawStr;
 	};
 });

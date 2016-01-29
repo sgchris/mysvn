@@ -2,7 +2,6 @@ MySVN = angular.module('MySVN', ['ui.router', 'ngCookies', 'ui.grid', 'ui-notifi
 
 // fix web API post requests
 MySVN.config(['$httpProvider', function($httpProvider) {
-	console.log('config1');
 	// Use x-www-form-urlencoded Content-Type
 	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 

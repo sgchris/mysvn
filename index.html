@@ -15,15 +15,15 @@
 <body>
 
 	<nav ng-controller="ConnectionController">
-		<section id="connection-info" ng-show="connection.isConnected" class="status-connected">
-			Connected to <strong>{{connection.url | hostNameFromURL}}</strong>. HEAD revision <strong>#{{connection.lastRevisionNumber}}</strong>
+		<section id="connection-info" ng-show="isConnected" class="status-connected">
+			Connected to <strong>{{url | hostNameFromURL}}</strong>. HEAD revision <strong>#{{lastRevisionNumber}}</strong>
 		</section>
-		<section id="connection-info" ng-show="!connection.isConnected" class="status-disconnected">
+		<section id="connection-info" ng-show="!isConnected" class="status-disconnected">
 			Disconnected
 		</section>
 		<section id="connection">
 			
-			<a href="javascript:;" ng-click="connection.toggleConnectionBox();" ng-class="{'clicked-down': connection.isOpen}">
+			<a href="javascript:;" ng-click="connection.isOpen = !connection.isOpen" ng-class="{'clicked-down': connection.isOpen}">
 				<i class="fa fa-lg fa-server"></i> Connection
 			</a>
 			<div id="connection-box-curtain" ng-show="connection.isOpen" ng-click="connection.isOpen = false;"></div>
@@ -32,20 +32,20 @@
 					<dl>
 						<dt>Url</dt>
 						<dd>
-							<input type="text" ng-model="connection.url" id="connection-dialog-url" 
-								ng-disabled="connection.isConnected || connection.isConnecting" placeholder="SVN URL" />
-							<button type="button" id="repo-browser-browse-btn" ng-disabled="connection.isConnected || connection.isConnecting" 
+							<input type="text" ng-model="url" id="connection-dialog-url" 
+								ng-disabled="isConnected || connection.isConnecting" placeholder="SVN URL" />
+							<button type="button" id="repo-browser-browse-btn" ng-disabled="isConnected || connection.isConnecting" 
 								ng-click="repoBrowser.open()"><i class="fa fa-folder-open-o"></i> Browse</button>
 						</dd>
-						<dt>Login</dt><dd><input type="text" ng-model="connection.login" ng-disabled="connection.isConnected || connection.isConnecting" placeholder="Login" /></dd>
-						<dt>Password</dt><dd><input type="password" ng-model="connection.password" ng-disabled="connection.isConnected || connection.isConnecting" placeholder="Password" /></dd>
+						<dt>Login</dt><dd><input type="text" ng-model="login" ng-disabled="isConnected || connection.isConnecting" placeholder="Login" /></dd>
+						<dt>Password</dt><dd><input type="password" ng-model="connection.password" ng-disabled="isConnected || connection.isConnecting" placeholder="Password" /></dd>
 						<dt>&nbsp;</dt>
 						<dd><label for="connection-store-locally" title="The connection details will be stored locally unencrypted. Not recommended for public/shared computers."><input type="checkbox" id="connection-store-locally" ng-model="connetion.storeConnection" /> Remember</label></dd>
 						<dt>&nbsp;</dt>
 						<dd>
-							<button type="submit" ng-show="!connection.isConnected && !connection.isConnecting"><i class="fa fa-plug"></i> Connect</button>
-							<button type="submit" ng-show="!connection.isConnected && connection.isConnecting"><i class="fa fa-spinner fa-spin"></i> Connecting</button>
-							<button type="submit" ng-show="connection.isConnected"><i class="fa fa-sign-out"></i> Disconnect</button>
+							<button type="submit" ng-show="!isConnected && !isConnecting"><i class="fa fa-plug"></i> Connect</button>
+							<button type="submit" ng-show="!isConnected && isConnecting"><i class="fa fa-spinner fa-spin"></i> Connecting</button>
+							<button type="submit" ng-show="isConnected"><i class="fa fa-sign-out"></i> Disconnect</button>
 							<button type="button" ng-click="connection.isOpen = false;"><i class="fa fa-times"></i> Close</button>
 						</dd>
 					</dl>

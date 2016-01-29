@@ -1,7 +1,14 @@
 MySVN.controller('RepoBrowserController', ['$scope', '$http', function($scope, $http) {
 	
-	$scope.path = '/';
-	$scope.revision = '123';
+	$scope.repoBrowser = {
+		path: '/',
+		revision: '123'
+	}
 	
+	$scope.filesTree = {
+		grid: {
+			data: []
+		}
+	};
 	
 }]);

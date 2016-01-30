@@ -107,7 +107,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', function($scope, $
 			rowTemplate: '<div ' + 
 				'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
 				'class="ui-grid-cell" ' + 
-				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-row\': (grid.appScope.commits.currentCommitRevId == row.entity.rev) }" ' + 
+				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ' + 
 				'ui-grid-cell ' + 
 				'ng-click="grid.appScope.filesTree.filesTreeClick(row.entity)"></div>',
 				

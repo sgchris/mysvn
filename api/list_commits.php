@@ -3,12 +3,12 @@
  * ----- request
  * POST /api/check_connection.php
  * {
- * 		host, login, password, 
- * 		to_revision(number) (default: head), 
+ * 		url, login, password,
+ * 		to_revision(number|"HEAD"), 
  * 		limit(number) (default: 30)
  * }
  * ----- response
- * {"result":"ok", "ls":[...]}
+ * {"result":"ok", "commits":[...]}
  * {"result":"error","error":"error info"}
  */
 

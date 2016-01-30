@@ -1,5 +1,5 @@
 <div id="panels-wrapper">
-	<div id="files-tree-panel" class="panel" style="height:{{panelHeight}}">
+	<div id="files-tree-panel" class="panel">
 		<h2>Files</h2>
 		<div id="repo-browser-url-wrapper">
 			<form>
@@ -8,7 +8,7 @@
 				<button><i class="fa fa-exit"></i> Go</button>
 			</form>
 		</div>
-		<div ui-grid="filesTree.grid"></div>
+		<div ui-grid="filesTree.grid" style="height:{{panelHeight}}"></div>
 	</div>
 	<div id="file-content-panel" class="panel" style="height:{{panelHeight}}">
 		<h2>Modified files list</h2>

@@ -145,6 +145,43 @@ class SvnClient {
 	}
 	
 	/**
+	 * @brief 
+	 * @param string $path 
+	 * @param number $revision 
+	 * @return  
+	 */
+	public function listFiles($svnUrl, $revision = null) {
+		if (false === $this->_getSvnInfo()) {
+			$this->setLastError('Cannot get SVN info');
+			return false;
+		}
+		
+		if (is_null($revision)) {
+			$revision = $this->getLastRevisionNumber();
+		}
+		
+		$this->svnUrl = $svnUrl;
+		$cacheKey = 'list_'.rawurlencode($svnUrl.'_'.$revision);
+		
+		if (!$this->cacheEnabled || null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+			// prepare and execute the command
+			$command = SVN_EXECUTABLE.' list -v '.$this->_getAuthArguments().' '.$svnUrl.'@'.$revision;
+			$result = $this->_exec($command);
+			if ($result === false) {
+				$this->setLastError('cannot execute command');
+				return false;
+			}
+			
+			$this->_getCacheObject()->store($cacheKey, $result);
+		}
+		
+		// transform to PHP readable format
+		$result = $this->_svnListToArray($result);
+		
+		return $result;
+	}
+	
+	/**
 	 * @brief diff two resources
 	 * @param string $path1 
 	 * @param int $revision1 - number or "HEAD"
@@ -381,6 +418,57 @@ class SvnClient {
 		}
 		
 		return $retVal;
+	}
+	
+	/**
+	 * @brief parse `svn list` output and store it in an array
+	 * @param array $result 
+	 * @return array
+	 */
+	protected function _svnListToArray($result) {
+		$filesList = array();
+		if (!empty($result)) {
+			foreach ($result as $i => $line) {
+				// check if this is a file or a folder
+				if (preg_match('%(\d+?)\s+(\w{3})\s+(\d+?)\s+\d{2}\:\d{2}\s+(.*?)$%i', $line, $matches)) {
+					$fileName = trim($matches[4]);
+					$fileSize = intval($matches[1]);
+					$filesList[] = array(
+						'url' => trim($this->svnUrl, '/') . '/' . $fileName,
+						'type' => 'file',
+						'name' => $fileName,
+						'size' => $fileSize,
+					);
+				} elseif (preg_match('%\s+(\w{3})\s+(\d+?)\s+\d{2}\:\d{2}\s+(.*?)$%i', $line, $matches)) {
+					$folderName = trim(trim($matches[3]), '/');
+					if (empty($folderName) || $folderName == '.') {
+						continue;
+					}
+					
+					$filesList[] = array(
+						'url' => trim($this->svnUrl, '/') . '/' . $folderName,
+						'type' => 'folder',
+						'name' => $folderName,
+					);
+				}
+			}
+		}
+		
+		// sort by type, name (asc)
+		usort($filesList, function($a, $b) {
+			// first folders, than files
+			if ($a['type'] == 'folder' && $b['type'] == 'file') {
+				return -1;
+			}
+			if ($a['type'] == 'file' && $b['type'] == 'folder') {
+				return 1;
+			}
+			
+			// same type, compare by name
+			return strcasecmp($a['name'], $b['name']);
+		});
+		
+		return $filesList;
 	}
 	
 	/**

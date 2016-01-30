@@ -1,32 +1,31 @@
 <?php
 /**
  * ----- request
- * POST /api/check_connection.php
- * {host, login, password}
+ * POST /api/list_files.php
+ * {
+ * 		url, login, password, 
+ * 		revision(number|"HEAD")
+ * }
  * ----- response
- * {"result":"ok", "ls":[...]}
+ * {"result":"ok", "files":[...]}
  * {"result":"error","error":"error info"}
  */
 
 // init the request 
 require_once __DIR__ . '/inc/config.php';
 
-// list folders and files
-$result = svn_ls($host);
-if ($result === false) {
+$svn = new SvnClient($url, $login, $password);
+if (($lastError = $svn->getLastError()) != '') {
 	die(json_encode(array(
 		'result' => 'error',
-		'error' => 'cannot read list',
+		'error' => $lastError,
 	)));
 }
 
-// transform the result to an array
-$retVal = array();
-foreach ($result as $fileName => $fileInfo) {
-	$retVal[] = array_merge(array('name' => $fileName), $fileInfo);
-}
+$revision = isset($_POST['revision']) && is_numeric($_POST['revision']) && $_POST['revision'] > 0 ? intval($_POST['revision']) : false;
+$filesList = $svn->listFiles($url, $revision);
 
 die(json_encode(array(
 	'result' => 'ok',
-	'ls' => $retVal,
+	'files' => $filesList,
 )));

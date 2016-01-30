@@ -3,8 +3,8 @@
  * ----- request
  * POST /api/get_diff.php
  * {
- * 		host, login, password, 
- * 		revision(number)
+ * 		url, login, password,
+ * 		revision(number|"HEAD")
  * }
  * ----- response
  * {"result":"ok", "diff":[...]}

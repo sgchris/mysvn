@@ -280,7 +280,7 @@ MySVN.filter('svnDateFilter', function() {
 		if (hh < 10) { hh = '0' + hh; } 
 		if (mi < 10) { mi = '0' + mi; } 
 		
-		var d = dd + '.' + mm + '.' + yyyy + ' ' + hh + ':' + mi + ' (' + dow[d.getDay()] + ')';
+		var d = dd + '.' + mm + '.' + yyyy + ' ' + hh + ':' + mi;
 		return d;
 	}
 });

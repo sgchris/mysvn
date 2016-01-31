@@ -4,8 +4,10 @@
 	box-sizing: border-box;
 }
 
-#repo-browser-url-wrapper {
-	padding: 0 0 5px 0;
+.repo-browser-toolbar {
+	height: 30px;
+	line-height: 30px;
+	margin-bottom: 5px;
 }
 
 #repo-browser-url-wrapper input[name="path"] {
@@ -25,7 +27,29 @@
 	width: 49.5%;
 	margin-right: 0.5%;
 }
+#rb-file-content {
+	overflow: auto;
+	background: #F5F6F6;
+	font-family: consolas, monospace;
+	font-size: 12px;
+}
 
 #file-revisions-panel {
 	width: 25%;
+}
+
+
+.repo-browser-open-tree-node-spinner {
+	display: none;
+}
+
+.repo-browser-opening-node .repo-browser-open-tree-node-spinner {
+	display: inline-block;
+}
+
+.initial-rb-file-content-state {
+	font-size: 30px;
+	line-height: 100px;
+	color: #DDD;
+	text-align: center;
 }

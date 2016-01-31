@@ -1,7 +1,7 @@
 <div id="panels-wrapper">
 	<div id="files-tree-panel" class="panel">
 		<h2>Files</h2>
-		<div id="repo-browser-url-wrapper">
+		<div id="repo-browser-url-wrapper" class="repo-browser-toolbar">
 			<form ng-submit="filesTree.init()">
 				<input type="text" name="path" ng-model="repoBrowser.path" placeholder="http://path.to/svn/url" />
 				<input type="text" name="revision" ng-model="repoBrowser.revision" placeholder="Rev number or &quot;HEAD&quot;" />
@@ -12,11 +12,11 @@
 	</div>
 	<div id="file-content-panel" class="panel" style="height:{{panelHeight}}">
 		<h2>Modified files list</h2>
-		<div id="file-content-toolbar">
+		<div id="file-content-toolbar" class="repo-browser-toolbar">
 			<a href="javascript:;">Content</a>
 			<a href="javascript:;">Diff</a>
 		</div>
-		<div xxx-ng-bind-html="fileContent.content"></div>
+		<div id="rb-file-content" hljs source="fileContent.content" style="height:{{panelHeight}}"></div>
 	</div>
 	<div id="file-revisions-panel" class="panel" style="height:{{panelHeight}}">
 		<h2>Revisions</h2>

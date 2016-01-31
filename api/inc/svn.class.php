@@ -182,6 +182,42 @@ class SvnClient {
 	}
 	
 	/**
+	 * @brief get the content of a file in a revision
+	 * @param string $path 
+	 * @param number $revision 
+	 * @return  
+	 */
+	public function getFileContent($svnUrl, $revision = null) {
+		if (false === $this->_getSvnInfo()) {
+			$this->setLastError('Cannot get SVN info');
+			return false;
+		}
+		
+		if (is_null($revision)) {
+			$revision = $this->getLastRevisionNumber();
+		}
+		
+		$this->svnUrl = $svnUrl;
+		$cacheKey = 'file_content_'.rawurlencode($svnUrl.'_'.$revision);
+		
+		if (!$this->cacheEnabled || null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+			// prepare and execute the command
+			$command = SVN_EXECUTABLE.' cat '.$this->_getAuthArguments().' '.$svnUrl.'@'.$revision;
+			$result = $this->_exec($command);
+			if ($result === false) {
+				$this->setLastError('cannot execute command');
+				return false;
+			}
+			
+			$this->_getCacheObject()->store($cacheKey, $result);
+		}
+		
+		$result = implode("\n", $result);
+		
+		return $result;
+	}
+	
+	/**
 	 * @brief diff two resources
 	 * @param string $path1 
 	 * @param int $revision1 - number or "HEAD"

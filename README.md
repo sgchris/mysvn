@@ -1,9 +1,10 @@
-# Boilerplate
+# phpMySVN
 
-Includes a sample Web App Boilerplate
+web based SVN client.
 
-* Angular (1.3.15) 
-* Twitter Bootstrap (3.3.4) 
-* jQuery (2.1.4)
-* Angular UI Bootstrap (0.13.0)
-* Angular Local Storage
+TODO:
+----
+* Repo browser - add revisions of a file
+* Repo browser - implement "diff" button
+* Commits list - add "create patch" button
+

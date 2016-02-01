@@ -5,7 +5,8 @@
 			<form ng-submit="filesTree.init()">
 				<input type="text" name="path" ng-model="repoBrowser.path" placeholder="http://path.to/svn/url" />
 				<input type="text" name="revision" ng-model="repoBrowser.revision" placeholder="Rev number or &quot;HEAD&quot;" />
-				<button type="submit"><i class="fa fa-exit"></i> Go</button>
+				<button ng-show="!filesTree.loadingTheTree" type="submit"><i class="fa fa-exit"></i> Go</button>
+				<button ng-show="filesTree.loadingTheTree" type="submit" disabled><i class="fa fa-spinner fa-spin"></i> Go</button>
 			</form>
 		</div>
 		<div ui-grid="filesTree.grid" style="height:{{panelHeight}}"></div>

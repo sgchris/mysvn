@@ -8,6 +8,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 	$scope.filesTree = {
 		currentlySelectedNodeUrl: null,
 		currentlyOpeningNodeUrl: null,
+		loadingTheTree: false,
 		
 		getNodeChildren: function(node, revision, successFn, failureFn, finallyFn) {
 			successFn = successFn || function(){};
@@ -53,16 +54,56 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		},
 		
 		init: function() {
+			$scope.filesTree.loadingTheTree = true;
+
 			$scope.filesTree.getNodeChildren({
 				url: $scope.repoBrowser.path,
 				'$$level': 0
 			}, $scope.repoBrowser.revision, function(filesList) {
 				$scope.filesTree.grid.data = filesList;
+			}, null, function() {
+				$scope.filesTree.loadingTheTree = false;
 			});
 		},
-		
+
+		_getUrlsToRemove: function(node) {
+
+			var removeUrls = [];
+			$scope.filesTree.grid.data.forEach(function(item, i) {
+				if (item.$$parent == node.url) {
+					// add the item itself
+					removeUrls.push(item.url);
+
+					// add all the children of this item
+					removeUrls = removeUrls.concat($scope.filesTree._getUrlsToRemove(item));
+				} 
+			});
+
+			return removeUrls;
+		},
+
+		_closeNode: function(node) {
+			var urlsToRemove = $scope.filesTree._getUrlsToRemove(node);
+			if (urlsToRemove.length > 0) {
+				// remove nodes from the data
+				var newData = [];
+				$scope.filesTree.grid.data.forEach(function(item, i) {
+
+					if (item.url == node.url) {
+						$scope.filesTree.grid.data[i].$$expanded = false;
+					}
+					
+					// mark as not expanded
+					if (urlsToRemove.indexOf(item.url) < 0) {
+						newData.push(item);
+					}	
+				});
+
+				$scope.filesTree.grid.data = newData;
+			}
+		},
+
 		filesTreeClick: function(node) {
-			
 			// if it's a file
 			if (node.type == 'file') {
 				// load file contents
@@ -70,20 +111,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 				$scope.fileContent.loadContent(node.url, $scope.repoBrowser.revision);
 			} else {
 				if (node.$$expanded) {			
-					// remove files from the data
-					var newData = [];
-					$scope.filesTree.grid.data.forEach(function(item, i) {
-							
-						// mark as not expanded
-						if (item.url == node.url && item.name == node.name) {
-							$scope.filesTree.grid.data[i].$$expanded = false;
-						}	
-						
-						if (item.$$parent != node.url + node.name) {
-							newData.push(item);
-						}
-					});
-					$scope.filesTree.grid.data = newData;
+					$scope.filesTree._closeNode(node);
 				} else {
 					
 					// load children of the node
@@ -91,7 +119,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 						
 						filesList.forEach(function(file, i) {
 							filesList[i].$$level = parseInt(node.$$level + 1);
-							filesList[i].$$parent = node.url + node.name;
+							filesList[i].$$parent = node.url;
 						});
 						
 						// add the files to the data

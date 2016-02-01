@@ -109,6 +109,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 				// load file contents
 				$scope.filesTree.currentlySelectedNodeUrl = node.url;
 				$scope.fileContent.loadContent(node.url, $scope.repoBrowser.revision);
+				$scope.revisions.loadRevisions();
 			} else {
 				if (node.$$expanded) {			
 					$scope.filesTree._closeNode(node);
@@ -210,6 +211,98 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 			// ..
 		}
 	};
+	
+	
+	$scope.revisions = {
+		currentlyOpeningRevision: null,
+		currentlySelectedRevision: null,
+		
+		revisionClick: function(revNode) {
+			$scope.revisions.currentlySelectedRevision = revNode.rev;
+			
+			// load file content from revision
+			$http({
+				method: 'POST',
+				url: '/api/get_file_content.php',
+				data: {
+					url: $scope.filesTree.currentlySelectedNodeUrl,
+					login: $scope.login,
+					password: $scope.password,
+					
+					revision: $scope.revisions.currentlySelectedRevision
+				}
+			}).then(function(res) {
+				if (res && res.data && res.data.result == 'ok') {
+					var content = res.data.content;
+					$scope.fileContent.content = content;
+				}
+				
+			}, failureFn).finally(function() {
+				
+			});
+		},
+		
+		loadRevisions: function(url) {
+			// call web API
+			$http({
+				method: 'POST',
+				url: '/api/list_commits.php',
+				data: {
+					url: $scope.filesTree.currentlySelectedNodeUrl,
+					login: $scope.login,
+					password: $scope.password,
+					limit: 200
+				}
+			}).then(function(res) {
+				if (!res || !res.data || !res.data.commits) {
+					Notification.error('Error in commits list response');
+					return false;
+				}
+				
+				$scope.revisions.grid.data = res.data.commits;
+				
+			}, function() {
+				Notification.error('mysvn server error :(');
+			}).finally(function() {
+				// stop the spinner
+			});
+		},
+		
+		grid: {
+			rowTemplate: '<div ' + 
+				'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
+				'class="ui-grid-cell" ' + 
+				'ng-class="{ ' + 
+					'\'ui-grid-row-header-cell\': col.isRowHeader, ' + 
+					'\'repo-browser-opening-node\': grid.appScope.revisions.currentlyOpeningRevision == row.entity.rev, ' + 
+					'\'selected-row\': grid.appScope.revisions.currentlySelectedRevision == row.entity.rev ' + 
+				'}" ' + 
+				'ui-grid-cell ' + 
+				'ng-click="grid.appScope.revisions.revisionClick(row.entity)"></div>',
+				
+			columnDefs: [{
+				name: 'rev',
+				displayName: '#REV',
+				width: '10%'
+			}, {
+				name: 'date',
+				displayName: 'Date',
+				width: '20%',
+				cellFilter: 'svnDateFilter'
+			}, {
+				name: 'author',
+				displayName: 'Author',
+				width: '20%'
+			}, {
+				name: 'msg',
+				displayName: 'Message',
+				width: '50%',
+				cellTemplate: '<span class="cell-value-wrapper" title="{{row.entity[col.name] | htmlentities}}">{{row.entity[col.name] | nowrap }}</span>'
+			}],
+			
+			data: []
+		}
+	}
 	
 	$scope.fileContent.init();
 	

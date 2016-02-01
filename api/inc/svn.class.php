@@ -95,6 +95,9 @@ class SvnClient {
 	protected function _getCacheObject() {
 		if (is_null($this->_cacheObject)) {
 			$this->_cacheObject = new Cache;
+			
+			// clear all expired keys
+			$this->_cacheObject->eraseExpired();
 		}
 		
 		return $this->_cacheObject;

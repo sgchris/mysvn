@@ -21,7 +21,6 @@ if (($lastError = $svn->getLastError()) != '') {
 		'error' => $lastError,
 	)));
 }
-$svn->eraseExpired();
 
 $revision = isset($_POST['revision']) && is_numeric($_POST['revision']) && $_POST['revision'] > 0 ? intval($_POST['revision']) : false;
 $filesList = $svn->listFiles($url, $revision);

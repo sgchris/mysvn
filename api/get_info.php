@@ -21,7 +21,6 @@ if (($lastError = $svn->getLastError()) != '') {
 		'error' => $lastError,
 	)));
 }
-$svn->eraseExpired();
 
 die(json_encode(array(
 	'result' => 'ok',

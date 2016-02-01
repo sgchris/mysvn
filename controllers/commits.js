@@ -82,6 +82,37 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 		},
 		
 		currentCommitRevId: null,
+
+		creatingPatch: false,
+		createPatch: function() {
+			if (!$scope.commits.currentCommitRevId) {
+				return;
+			}
+
+			$scope.commits.creatingPatch = true;
+			$http({
+				method: 'POST',
+				url: '/api/get_diff.php',
+				data: {
+					url: $scope.baseSvnUrl,
+					login: $scope.login,
+					password: $scope.password,
+					
+					revision: $scope.commits.currentCommitRevId,
+				}
+			}).then(function(res) {
+				if (res && res.data && res.data.result == 'ok') {
+					var dataUrl = 'data:text/plain;base64,' + btoa(res.data.diff);
+					var link = document.createElement('a');
+					link.download = 'patch_' + $scope.commits.currentCommitRevId + '.patch';
+					link.href = dataUrl;
+					link.click();
+					//window.open(dataUrl);
+				}
+			}).finally(function() {
+				$scope.commits.creatingPatch = false;
+			});
+		},
 		
 		commitsListGrid: {
 			rowTemplate: '<div ' + 

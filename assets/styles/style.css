@@ -192,7 +192,7 @@ nav #connection-dialog-url {
 }
 #commits-list form { 
 	float: right;
-	margin-top: 1.5em;
+	margin-top: 1.2em;
 }
 #commits-list form input#commits-limit { 
 	width: 50px;
@@ -239,6 +239,11 @@ nav #connection-dialog-url {
 	float: left;
 	width: 25%;
 	margin-right: 0.5%;
+}
+
+#modified-files-list #create-patch-btn {
+	float: right;
+	margin-top: 1.2em;
 }
 
 #modified-file-diff {

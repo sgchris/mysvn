@@ -13,3 +13,6 @@ assets/js/svn_cred.js
 
 # skip the cache
 api/cache
+
+# skip all the swap files 
+*.swp

@@ -179,7 +179,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		},
 		
 		init: function() {
-			$scope.fileContent.content = $scope.fileContent.initialContentHtml;
+			// ..
 		}
 	};
 	

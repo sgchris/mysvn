@@ -80,7 +80,7 @@ MySVN.run(['$rootScope', function($rootScope) {
 	
 	$rootScope.fixHeights = function() {
 		var h = $rootScope.getWindowHeight();
-		$rootScope.panelHeight = (h - 150) + 'px';
+		$rootScope.panelHeight = (h - 170) + 'px';
 	};
 	
 	// watch window height, and fix heights of the panels

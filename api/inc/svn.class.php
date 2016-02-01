@@ -291,7 +291,7 @@ class SvnClient {
 			$command = SVN_EXECUTABLE.' info '.($this->_getAuthArguments()).' '.$this->svnUrl;
 			$result = $this->_exec($command);
 			
-			$this->_getCacheObject()->store($cacheKey, $result);
+			$this->_getCacheObject()->store($cacheKey, $result, 60 * 5); // store the info for 5 minutes
 		}
 		
 		// parse the result

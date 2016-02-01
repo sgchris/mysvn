@@ -16,7 +16,10 @@
 			<a href="javascript:;">Content</a>
 			<a href="javascript:;">Diff</a>
 		</div>
-		<div id="rb-file-content" hljs source="fileContent.content" style="height:{{panelHeight}}"></div>
+		<div ng-show="!fileContent.content" id="rb-file-content" style="height:{{panelHeight}}">
+			<div class="initial-rb-file-content-state">Select a file in the tree to view its content</div>
+		</div>
+		<div ng-show="fileContent.content" id="rb-file-content" hljs source="fileContent.content" style="height:{{panelHeight}}"></div>
 	</div>
 	<div id="file-revisions-panel" class="panel" style="height:{{panelHeight}}">
 		<h2>Revisions</h2>

@@ -22,6 +22,7 @@ if (($lastError = $svn->getLastError()) != '') {
 		'error' => $lastError,
 	)));
 }
+$svn->eraseExpired();
 
 $toRevision = isset($_POST['to_revision']) && is_numeric($_POST['to_revision']) && $_POST['to_revision'] > 0 ? intval($_POST['to_revision']) : 'HEAD';
 $limit = isset($_POST['limit']) && is_numeric($_POST['limit']) && $_POST['limit'] > 0 ? intval($_POST['limit']) : 30;

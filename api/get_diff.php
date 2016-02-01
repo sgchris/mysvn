@@ -22,6 +22,7 @@ if (($lastError = $svn->getLastError()) != '') {
 		'error' => $lastError,
 	)));
 }
+$svn->eraseExpired();
 
 $revision1 = isset($_POST['revision']) && is_numeric($_POST['revision']) && $_POST['revision'] > 0 ? intval($_POST['revision']) : $svn->getLastRevisionNumber();
 $revision2 = $revision1 - 1;

@@ -109,7 +109,12 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 				// load file contents
 				$scope.filesTree.currentlySelectedNodeUrl = node.url;
 				$scope.fileContent.loadContent(node.url, $scope.repoBrowser.revision);
-				$scope.revisions.loadRevisions();
+				$scope.revisions.loadRevisions(function(res) {
+					// select the first item
+					if (res && res.length > 0) {
+						$scope.revisions.currentlySelectedRevision = res[0].rev;
+					}
+				});
 			} else {
 				if (node.$$expanded) {			
 					$scope.filesTree._closeNode(node);
@@ -242,7 +247,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 			});
 		},
 		
-		loadRevisions: function(url) {
+		loadRevisions: function(callbackFn, failureFn, finallyFn) {
 			// call web API
 			$http({
 				method: 'POST',
@@ -256,15 +261,26 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 			}).then(function(res) {
 				if (!res || !res.data || !res.data.commits) {
 					Notification.error('Error in commits list response');
+					if (typeof(failureFn) == 'function') {
+						failureFn();
+					}
 					return false;
 				}
 				
 				$scope.revisions.grid.data = res.data.commits;
 				
+				if (typeof(callbackFn) == 'function') {
+					callbackFn(res.data.commits);
+				}
 			}, function() {
 				Notification.error('mysvn server error :(');
+				if (typeof(failureFn) == 'function') {
+					failureFn();
+				}
 			}).finally(function() {
-				// stop the spinner
+				if (typeof(finallyFn) == 'function') {
+					finallyFn();
+				}
 			});
 		},
 		

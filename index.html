@@ -43,8 +43,8 @@
 						<dd><label for="connection-store-locally" title="The connection details will be stored locally unencrypted. Not recommended for public/shared computers."><input type="checkbox" id="connection-store-locally" ng-model="connetion.storeConnection" /> Remember</label></dd>
 						<dt>&nbsp;</dt>
 						<dd>
-							<button type="submit" ng-show="!isConnected && !isConnecting"><i class="fa fa-plug"></i> Connect</button>
-							<button type="submit" ng-show="!isConnected && isConnecting"><i class="fa fa-spinner fa-spin"></i> Connecting</button>
+							<button type="submit" ng-show="!isConnected && !connection.isConnecting"><i class="fa fa-plug"></i> Connect</button>
+							<button type="submit" ng-show="!isConnected && connection.isConnecting"><i class="fa fa-spinner fa-spin"></i> Connecting</button>
 							<button type="submit" ng-show="isConnected"><i class="fa fa-sign-out"></i> Disconnect</button>
 							<button type="button" ng-click="connection.isOpen = false;"><i class="fa fa-times"></i> Close</button>
 						</dd>

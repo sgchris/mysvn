@@ -106,9 +106,16 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		filesTreeClick: function(node) {
 			// if it's a file
 			if (node.type == 'file') {
-				// load file contents
+				
+				// mark the relevant flags
 				$scope.filesTree.currentlySelectedNodeUrl = node.url;
-				$scope.fileContent.loadContent(node.url, $scope.repoBrowser.revision);
+				$scope.revisions.currentlySelectedRevision = null;
+				
+				// mark the "content" tab
+				$scope.fileContent.setTab('content');
+				
+				// load contents and revisions
+				$scope.fileContent.loadContent();
 				$scope.revisions.loadRevisions(function(res) {
 					// select the first item
 					if (res && res.length > 0) {
@@ -180,20 +187,43 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 	$scope.filesTree.init();
 	
 	$scope.fileContent = {
+		isContentDisplayed: true,
+		contentLoading: false,
+		isDiffDisplayed: false,
+		diffLoading: false,
+		
+		setTab: function(selectedTab) {
+			if (selectedTab == 'content') {
+				$scope.fileContent.isContentDisplayed = true;
+				$scope.fileContent.isDiffDisplayed = false;
+				
+				// load the content
+				$scope.fileContent.loadContent($scope.filesTree.currentlySelectedNodeUrl, $scope.revisions.currentlySelectedRevision);
+			} else if (selectedTab == 'diff') {
+				$scope.fileContent.isContentDisplayed = false;
+				$scope.fileContent.isDiffDisplayed = true;
+				
+				// load the diff
+				$scope.fileContent.loadDiff($scope.filesTree.currentlySelectedNodeUrl, $scope.revisions.currentlySelectedRevision);
+			}
+		},
+		
 		initialContentHtml: '<div class="initial-rb-file-content-state">Select a file in the tree to view its content</div>',
 		content: '',
 		
-		loadContent: function(url, revision, successFn, failureFn, finallyFn) {
+		loadContent: function(successFn, failureFn, finallyFn) {
 			
-			$scope.filesTree.currentlyOpeningNodeUrl = url;
+			$scope.filesTree.currentlyOpeningNodeUrl = $scope.filesTree.currentlySelectedNodeUrl;
+			
+			$scope.fileContent.contentLoading = true;
 			$http({
 				method: 'POST',
 				url: '/api/get_file_content.php',
 				data: {
-					url: url,
+					url: $scope.filesTree.currentlySelectedNodeUrl,
 					login: $scope.login,
 					password: $scope.password,
-					revision: revision,
+					revision: $scope.revisions.currentlySelectedRevision,
 				}
 			}).then(function(res) {
 				if (res && res.data && res.data.result == 'ok') {
@@ -204,11 +234,49 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 						successFn(res.data.files);
 					}
 				} else {
-					failureFn();
+					if (typeof(failureFn) == 'function') {
+						failureFn();
+					}
 				}
 			}, failureFn).finally(function() {
 				$scope.filesTree.currentlyOpeningNodeUrl = null;
-				finallyFn();
+				$scope.fileContent.contentLoading = false;
+				
+				if (typeof(finallyFn) == 'function') {
+					finallyFn();
+				}
+			});
+		},
+		
+		loadDiff: function(successFn, failureFn, finallyFn) {
+			$scope.fileContent.diffLoading = true;
+			$http({
+				method: 'POST',
+				url: '/api/get_diff.php',
+				data: {
+					url: $scope.filesTree.currentlySelectedNodeUrl,
+					login: $scope.login,
+					password: $scope.password,
+					revision: $scope.revisions.currentlySelectedRevision,
+				}
+			}).then(function(res) {
+				if (res && res.data && res.data.result == 'ok') {
+					var content = res.data.diff;
+					$scope.fileContent.content = content;
+					
+					if (typeof(successFn) == 'function') {
+						successFn(res.data.diff);
+					}
+				} else {
+					if (typeof(failureFn) == 'function') {
+						failureFn();
+					}
+				}
+			}, failureFn).finally(function() {
+				$scope.fileContent.diffLoading = false;
+				if (typeof(finallyFn) == 'function') {
+					finallyFn();
+				}
 			});
 		},
 		
@@ -225,28 +293,10 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		revisionClick: function(revNode) {
 			$scope.revisions.currentlySelectedRevision = revNode.rev;
 			
+			$scope.fileContent.setTab('content');
+			
 			// load file content from revision
-			$http({
-				method: 'POST',
-				url: '/api/get_file_content.php',
-				data: {
-					url: $scope.filesTree.currentlySelectedNodeUrl,
-					login: $scope.login,
-					password: $scope.password,
-					
-					revision: $scope.revisions.currentlySelectedRevision
-				}
-			}).then(function(res) {
-				if (res && res.data && res.data.result == 'ok') {
-					var content = res.data.content;
-					$scope.fileContent.content = content;
-				}
-				
-			}, function() {
-				// ..
-			}).finally(function() {
-				// ..
-			});
+			$scope.fileContent.loadContent();
 		},
 		
 		loadRevisions: function(callbackFn, failureFn, finallyFn) {

@@ -53,3 +53,25 @@
 	color: #DDD;
 	text-align: center;
 }
+
+#file-content-toolbar {
+	margin: 5px 0 0 0;
+}
+#file-content-toolbar a {
+	display: inline-block;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	box-sizing: border-box;
+	padding: 0 20px;
+	margin: 0;
+	background: #FAFAFA;
+	border-top: 1px solid #EEE;
+	border-right: 1px solid #EEE;
+}
+#file-content-toolbar a.active {
+	font-weight: bold;
+	background: #F5F6F6;
+	border-top: 1px solid #DADADA;
+	border-right: 1px solid #DADADA;
+}

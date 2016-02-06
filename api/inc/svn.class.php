@@ -8,6 +8,7 @@ class SvnClient {
 	
 	protected $logEnabled = true;
 	protected $cacheEnabled = true;
+	protected $dynamicDataCacheTTL = 180;
 	
 	// supplied by user
 	protected $login;
@@ -138,7 +139,7 @@ class SvnClient {
 				return false;
 			}
 			
-			$this->_getCacheObject()->store($cacheKey, $result, 60); // expire in one minute
+			$this->_getCacheObject()->store($cacheKey, $result, $this->dynamicDataCacheTTL); // store the info for `dynamicDataCacheTTL` time
 		}
 		
 		// transform to PHP readable format
@@ -294,7 +295,7 @@ class SvnClient {
 			$command = SVN_EXECUTABLE.' info '.($this->_getAuthArguments()).' '.$this->svnUrl;
 			$result = $this->_exec($command);
 			
-			$this->_getCacheObject()->store($cacheKey, $result, 60); // store the info for 1 minute
+			$this->_getCacheObject()->store($cacheKey, $result, $this->dynamicDataCacheTTL); // store the info for `dynamicDataCacheTTL` time
 		}
 		
 		// parse the result

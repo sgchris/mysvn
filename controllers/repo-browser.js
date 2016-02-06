@@ -288,6 +288,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 	$scope.revisions = {
 		currentlyOpeningRevision: null,
 		currentlySelectedRevision: null,
+		loadingRevisions: false,
 		
 		revisionClick: function(revNode) {
 			$scope.revisions.currentlySelectedRevision = revNode.rev;
@@ -299,6 +300,8 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		},
 		
 		loadRevisions: function(callbackFn, failureFn, finallyFn) {
+			$scope.revisions.loadingRevisions = true;
+			
 			// call web API
 			$http({
 				method: 'POST',
@@ -329,6 +332,8 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 					failureFn();
 				}
 			}).finally(function() {
+				$scope.revisions.loadingRevisions = false;
+				
 				if (typeof(finallyFn) == 'function') {
 					finallyFn();
 				}

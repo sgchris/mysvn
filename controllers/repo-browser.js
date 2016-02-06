@@ -242,8 +242,10 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 					$scope.fileContent.content = content;
 				}
 				
-			}, failureFn).finally(function() {
-				
+			}, function() {
+				// ..
+			}).finally(function() {
+				// ..
 			});
 		},
 		

@@ -224,14 +224,18 @@ nav #connection-dialog-url {
 	height: 700px;
 }
 
-.ui-grid-row .ui-grid-cell {
+.ui-grid-row .ui-grid-cell,
+.ui-grid-row .ui-grid-cell-second-row {
 	cursor: pointer;
 }
-.ui-grid-row:hover .ui-grid-cell {
+
+.ui-grid-row:hover .ui-grid-cell,
+.ui-grid-row:hover .ui-grid-cell-second-row {
 	background: #DDD;
 }
 
-.ui-grid-row .ui-grid-cell.selected-row {
+.ui-grid-row .ui-grid-cell.selected-row,
+.ui-grid-row .ui-grid-cell-second-row.selected-row {
 	background: #B5D4F3;
 }
 

@@ -208,7 +208,6 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 			}
 		},
 		
-		initialContentHtml: '<div class="initial-rb-file-content-state">Select a file in the tree to view its content</div>',
 		content: '',
 		
 		loadContent: function(successFn, failureFn, finallyFn) {
@@ -346,27 +345,35 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 					'\'selected-row\': grid.appScope.revisions.currentlySelectedRevision == row.entity.rev ' + 
 				'}" ' + 
 				'ui-grid-cell ' + 
-				'ng-click="grid.appScope.revisions.revisionClick(row.entity)"></div>',
+				'ng-click="grid.appScope.revisions.revisionClick(row.entity)"></div>' + 
+				'<div class="ui-grid-cell-second-row" ng-click="grid.appScope.revisions.revisionClick(row.entity)" ' + 
+					'ng-class="{ \'selected-row\': grid.appScope.revisions.currentlySelectedRevision == row.entity.rev}">' + 
+					'Message: <strong>{{row.entity.msg}}</strong>' + 
+				'</div>',
 				
 			columnDefs: [{
 				name: 'rev',
 				displayName: '#REV',
-				width: '10%'
+				width: '20%'
 			}, {
 				name: 'date',
 				displayName: 'Date',
-				width: '20%',
+				width: '40%',
 				cellFilter: 'svnDateFilter'
 			}, {
 				name: 'author',
 				displayName: 'Author',
-				width: '20%'
-			}, {
+				width: '40%'
+			}, 
+			/*
+			{
 				name: 'msg',
 				displayName: 'Message',
 				width: '50%',
 				cellTemplate: '<span class="cell-value-wrapper" title="{{row.entity[col.name] | htmlentities}}">{{row.entity[col.name] | nowrap }}</span>'
-			}],
+			}
+			*/
+			],
 			
 			data: []
 		}

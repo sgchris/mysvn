@@ -38,7 +38,7 @@
 								ng-click="repoBrowser.open()"><i class="fa fa-folder-open-o"></i> Browse</button>
 						</dd>
 						<dt>Login</dt><dd><input type="text" ng-model="login" ng-disabled="isConnected || connection.isConnecting" placeholder="Login" /></dd>
-						<dt>Password</dt><dd><input type="password" ng-model="connection.password" ng-disabled="isConnected || connection.isConnecting" placeholder="Password" /></dd>
+						<dt>Password</dt><dd><input type="password" ng-model="password" ng-disabled="isConnected || connection.isConnecting" placeholder="Password" /></dd>
 						<dt>&nbsp;</dt>
 						<dd><label for="connection-store-locally" title="The connection details will be stored locally unencrypted. Not recommended for public/shared computers."><input type="checkbox" id="connection-store-locally" ng-model="connetion.storeConnection" /> Remember</label></dd>
 						<dt>&nbsp;</dt>

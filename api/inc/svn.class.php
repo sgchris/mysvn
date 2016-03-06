@@ -522,6 +522,16 @@ class SvnClient {
 		}
 		
 		$logFile = __FILE__.'.log';
+		if (file_exists($logFile)) {
+			if (!is_writeable($logFile)) {
+				return;
+			}
+		} else {
+			if (!is_writeable(dirname($logFile))) {
+				return false;
+			}
+		}
+		
 		@file_put_contents($logFile, date('d.m.Y H:i:s').": {$str}\n", FILE_APPEND);
 	}
 	

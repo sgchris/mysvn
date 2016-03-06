@@ -271,6 +271,20 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 		}
 	});
 	
+	// handle window resize and curtains
+	$scope.commitsListPanelWidth = '1px';
+	$scope.modifiedFilesPanelWidth = '1px';
+	$scope.fixWidths = function() {
+		$scope.commitsListPanelWidth = document.getElementById('commits-list-grid').clientWidth + 'px';
+		$scope.modifiedFilesPanelWidth = document.getElementById('modified-file-content').clientWidth + 'px';
+	}
+	window.addEventListener('resize', function() {
+		$scope.$apply(function() {
+			$scope.fixWidths();
+		});
+	});
+	$scope.fixWidths();
+	
 }]);
 
 MySVN.filter('nowrap', function() {

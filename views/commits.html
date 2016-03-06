@@ -9,8 +9,8 @@
 			<button type="submit" ng-show="commits.isLoading" ng-disabled="!isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
 		</form>
 	</div>
-	<div id="commits-list-grid-curtain" ng-show="commits.isLoading" style="height:{{panelHeight}};"></div>
-	<div id="commits-list-grid-spinner" ng-show="commits.isLoading" style="height:{{panelHeight}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+	<div id="commits-list-grid-curtain" ng-show="commits.isLoading" style="height:{{panelHeight}}; width: {{commitsListPanelWidth}};"></div>
+	<div id="commits-list-grid-spinner" ng-show="commits.isLoading" style="height:{{panelHeight}}; width: {{commitsListPanelWidth}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
 	<div ui-grid="commits.commitsListGrid" id="commits-list-grid" style="height:{{panelHeight}}"></div>
 </div>
 <div id="modified-files-list">
@@ -23,7 +23,7 @@
 </div>
 <div id="modified-file-diff">
 	<h2>Diff</h2>
-	<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}"></div>
-	<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+	<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}; width: {{modifiedFilesPanelWidth}};"></div>
+	<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}; width: {{modifiedFilesPanelWidth}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
 	<div id="modified-file-content" hljs source="modifiedFiles.diffString" style="height:{{panelHeight}}"></div>
 </div>

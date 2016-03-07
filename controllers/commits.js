@@ -118,29 +118,32 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 			rowTemplate: '<div ' + 
 				'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
 				'class="ui-grid-cell" ' + 
-				'ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader, \'selected-row\': (grid.appScope.commits.currentCommitRevId == row.entity.rev) }" ' + 
+				'ng-class="{ ' + 
+					'\'ui-grid-row-header-cell\': col.isRowHeader, ' + 
+					'\'selected-row\': (grid.appScope.commits.currentCommitRevId == row.entity.rev) ' + 
+				'}" ' + 
 				'ui-grid-cell ' + 
-				'ng-click="grid.appScope.commits.rowClicked(row.entity)"></div>',
+				'ng-click="grid.appScope.commits.rowClicked(row.entity)"></div>' + 
+				'<div class="ui-grid-cell-second-row" ng-click="grid.appScope.commits.rowClicked(row.entity)" ' + 
+					'ng-class="{ \'selected-row\': grid.appScope.commits.currentCommitRevId == row.entity.rev}" ' + 
+					'title="{{row.entity.msg}}">' + 
+					'Message: <strong>{{row.entity.msg}}</strong>' + 
+				'</div>',
 			
 			columnDefs: [{
 				name: 'rev',
 				displayName: '#REV',
-				width: '10%'
+				width: '20%'
 				//cellTemplate: '<span ng-bind-html="row.entity[col.name] | nameColumnFilter:row.entity"></span>',
 			}, {
 				name: 'date',
 				displayName: 'Date',
-				width: '20%',
+				width: '30%',
 				cellFilter: 'svnDateFilter'
 			}, {
 				name: 'author',
 				displayName: 'Author',
-				width: '20%'
-			}, {
-				name: 'msg',
-				displayName: 'Message',
-				width: '50%',
-				cellTemplate: '<span class="cell-value-wrapper" title="{{row.entity[col.name] | htmlentities}}">{{row.entity[col.name] | nowrap }}</span>'
+				width: '50%'
 			}],
 			
 			data: []

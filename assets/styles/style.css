@@ -239,6 +239,30 @@ nav #connection-dialog-url {
 	background: #B5D4F3;
 }
 
+#commits-list .ui-grid-row {
+	height: initial;
+}
+
+#commits-list .ui-grid-row:nth-child(even) .ui-grid-cell,
+#commits-list .ui-grid-row:nth-child(even) .ui-grid-cell-second-row {
+	background-color: #f3f3f3;
+}
+
+#commits-list .ui-grid-row:nth-child(even) .ui-grid-cell.selected-row,
+#commits-list .ui-grid-row:nth-child(even) .ui-grid-cell-second-row.selected-row {
+	background-color: #B5D4F3;
+}
+
+#commits-list .ui-grid-cell-second-row {
+	clear: both;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 5px;
+	border-bottom: 1px solid #DDD;
+}
+
 #modified-files-list {
 	float: left;
 	width: 25%;

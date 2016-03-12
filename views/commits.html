@@ -1,19 +1,19 @@
-<div id="commits-list">
-	<div id="commits-toolbar">
+<div id="commits-list" class="mysvn-grid-box">
+	<div class="toolbar">
 		<h2>Commits</h2>
 		<form ng-submit="commits.loadCommitsList()">
-			<span>Display</span> <input type="number" ng-model="commits.commitsLimit" id="commits-limit" placeholder="N"> <span>commits</span>
-			<span>before revision</span> <input type="text" ng-model="commits.commitsTillRevision" id="commits-till-revision" placeholder="&quot;HEAD&quot; or number"></label>
+			<span>Display</span> <input type="number" class="size-small" ng-model="commits.commitsLimit" placeholder="N" /> <span>commits</span>
+			<span>before revision</span> <input type="number" class="size-medium" ng-model="commits.commitsTillRevision" placeholder="N"></label>
 			
-			<button type="submit" ng-show="!commits.isLoading" ng-disabled="!isConnected"><i class="fa fa-lg fa-list-alt"></i> Load</button>
-			<button type="submit" ng-show="commits.isLoading" ng-disabled="!isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
+			<button type="submit" class="size-medium" ng-show="!commits.isLoading" ng-disabled="!isConnected"><i class="fa fa-lg fa-list-alt"></i> Load</button>
+			<button type="submit" class="size-medium" ng-show="commits.isLoading" ng-disabled="!isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
 		</form>
 	</div>
-	<div id="commits-list-grid-curtain" ng-show="commits.isLoading" style="height:{{panelHeight}}; width: {{commitsListPanelWidth}};"></div>
-	<div id="commits-list-grid-spinner" ng-show="commits.isLoading" style="height:{{panelHeight}}; width: {{commitsListPanelWidth}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
-	<div ui-grid="commits.commitsListGrid" id="commits-list-grid" style="height:{{panelHeight}}"></div>
+	<div id="commits-list-grid-curtain" class="curtain" ng-show="commits.isLoading" style="height:{{panelHeight}}; width: {{commitsListPanelWidth}};"></div>
+	<div id="commits-list-grid-spinner" class="curtain-spinner" ng-show="commits.isLoading" style="height:{{panelHeight}}; width: {{commitsListPanelWidth}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+	<div ui-grid="commits.commitsListGrid" id="commits-list-grid" class="mysvn-two-lines-in-row" style="height:{{panelHeight}}"></div>
 </div>
-<div id="modified-files-list">
+<div id="modified-files-list" class="mysvn-grid-box">
 	<h2>
 	Modified files list
 	<button ng-show="!commits.creatingPatch" id="create-patch-btn" ng-click="commits.createPatch();"><i class="fa fa-code-fork"></i> Download patch</button>

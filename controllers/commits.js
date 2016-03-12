@@ -115,6 +115,7 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 		},
 		
 		commitsListGrid: {
+			rowHeight: 24,
 			rowTemplate: '<div ' + 
 				'ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ' + 
 				'class="ui-grid-cell" ' + 
@@ -127,7 +128,7 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 				'<div class="ui-grid-cell-second-row" ng-click="grid.appScope.commits.rowClicked(row.entity)" ' + 
 					'ng-class="{ \'selected-row\': grid.appScope.commits.currentCommitRevId == row.entity.rev}" ' + 
 					'title="{{row.entity.msg}}">' + 
-					'Message: <strong>{{row.entity.msg}}</strong>' + 
+					'{{row.entity.msg}}' + 
 				'</div>',
 			
 			columnDefs: [{

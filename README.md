@@ -11,4 +11,4 @@ TODO:
 * repo-browser: clear commits list when selecting another file
 * add line numbers to the file content
 * disable "diff" until repo list is loaded
-
+* add the option to open the content/diff of a file in a new window/tab

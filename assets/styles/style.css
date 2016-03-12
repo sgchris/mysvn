@@ -34,6 +34,16 @@ input[type="password"]
 	border-radius: 3px;
 }
 
+input.size-small {
+	width: 50px;
+}
+input.size-medium {
+	width: 100px;
+}
+input.size-large {
+	width: 150px;
+}
+
 strong {
 	font-weight: bold;
 	color: #000;
@@ -107,40 +117,6 @@ nav #connection-dialog-url {
 	width: calc(95% - 82px);
 }
 
-
-/* repo-browser box */
-
-#repo-browser-curtain {
-	background: #FFF;
-	opacity: 0.8;
-	
-	position : fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: 150;
-}
-
-
-#repo-browser-box {
-	overflow: auto;
-	
-	padding: 10px;
-	border: 1px solid #CCC;
-	box-shadow: 0 0 10px rgba(0,0,0,0.3);
-	background: #FFF;
-	opacity: 0.8;
-
-	position : fixed;
-	top: 10%;
-	bottom: 10%;
-	
-	right: 30%;
-	left: 30%;
-	z-index: 151;	
-}
-
 /* Connection box */
 
 #connection #connection-box-curtain {
@@ -180,49 +156,44 @@ nav #connection-dialog-url {
 	overflow: hidden;
 }
 
-#commits-list { 
-	width: 40%;
+.mysvn-grid-box {
 	margin-right: 0.5%;
 	float: left;
 }
-#commits-toolbar {
+
+#commits-list { 
+	width: 40%;
+}
+
+.mysvn-grid-box .toolbar {
 	overflow: hidden;
 }
-#commits-list h2 {
+
+.mysvn-grid-box h2 {
 	display: inline-block;
 }
-#commits-list form { 
+
+.mysvn-grid-box form { 
 	float: right;
 	margin-top: 1.2em;
 }
-#commits-list form input#commits-limit { 
-	width: 50px;
-}
-#commits-list form input#commits-till-revision { 
-	width: 80px;
-}
-#commits-list form button[type="submit"] { 
-	width: 100px;
-	text-align: center;
+
+.mysvn-grid-box .ui-grid-cell-contents {
+	font-size: 13px;
 }
 
-#commits-list-grid-curtain {
+.curtain {
 	background: #FFF;
 	opacity: 0.8;
 	position : absolute;
 	z-index: 90;
 }
 	
-#commits-list-grid-spinner {
+.curtain-spinner {
 	position: absolute;
 	z-index: 91;
 	text-align: center;
 	color: #000;
-}
-
-
-#commits-list-grid {
-	height: 700px;
 }
 
 .ui-grid-row .ui-grid-cell,
@@ -240,17 +211,17 @@ nav #connection-dialog-url {
 	background: #B5D4F3;
 }
 
-#commits-list .ui-grid-row {
+.mysvn-two-lines-in-row .ui-grid-row {
 	height: initial;
 }
 
-#commits-list .ui-grid-row:nth-child(even) .ui-grid-cell,
-#commits-list .ui-grid-row:nth-child(even) .ui-grid-cell-second-row {
+.mysvn-two-lines-in-row .ui-grid-row:nth-child(even) .ui-grid-cell,
+.mysvn-two-lines-in-row .ui-grid-row:nth-child(even) .ui-grid-cell-second-row {
 	background-color: #f3f3f3;
 }
 
-#commits-list .ui-grid-row:nth-child(even) .ui-grid-cell.selected-row,
-#commits-list .ui-grid-row:nth-child(even) .ui-grid-cell-second-row.selected-row {
+.mysvn-two-lines-in-row .ui-grid-row:nth-child(even) .ui-grid-cell.selected-row,
+.mysvn-two-lines-in-row .ui-grid-row:nth-child(even) .ui-grid-cell-second-row.selected-row {
 	background-color: #B5D4F3;
 }
 
@@ -258,8 +229,9 @@ nav #connection-dialog-url {
 	clear: both;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	height: 30px;
-	line-height: 30px;
+	font-size: 13px;
+	height: 24px;
+	line-height: 24px;
 	padding: 0 5px;
 	border-bottom: 1px solid #DDD;
 }
@@ -303,7 +275,8 @@ nav #connection-dialog-url {
 }
 
 .cell-value-wrapper {
-	line-height: 30px;
+	line-height: 24px;
+	font-size: 13px;
 	padding: 0 5px;
 	white-space: nowrap;
 	text-overflow: ellipsis;

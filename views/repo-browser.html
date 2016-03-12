@@ -1,5 +1,5 @@
 <div id="panels-wrapper">
-	<div id="files-tree-panel" class="panel">
+	<div id="files-tree-panel" class="panel" class="mysvn-grid-box">
 		<h2>Files</h2>
 		<div id="repo-browser-url-wrapper" class="repo-browser-toolbar">
 			<form ng-submit="filesTree.init()">
@@ -35,7 +35,7 @@
 		</div>
 		<div ng-show="fileContent.content" id="rb-file-content" hljs source="fileContent.content" style="height:{{panelHeight}}"></div>
 	</div>
-	<div id="file-revisions-panel" class="panel" style="height:{{panelHeight}}">
+	<div id="file-revisions-panel" class="panel mysvn-grid-box" style="height:{{panelHeight}}">
 		<h2>Revisions</h2>
 		<div class="repo-browser-toolbar">
 			<span ng-show="revisions.loadingRevisions"><i class="fa fa-spinner fa-spin"></i> Loading revisions</span>

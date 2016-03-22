@@ -228,6 +228,8 @@ nav #connection-dialog-url {
 .ui-grid-row .ui-grid-cell,
 .ui-grid-row .ui-grid-cell-second-row {
 	cursor: pointer;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .ui-grid-row:hover .ui-grid-cell,

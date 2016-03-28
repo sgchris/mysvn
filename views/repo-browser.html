@@ -20,7 +20,7 @@
 					<i class="fa fa-spinner fa-spin"></i>
 				</span>
 			</a>
-			<a href="javascript:;" ng-class="{active: fileContent.isDiffDisplayed}" ng-click="fileContent.setTab('diff');">
+			<a href="javascript:;" ng-class="{active: fileContent.isDiffDisplayed}" ng-show="revisions.currentlySelectedRevision && !revisions.loadingRevisions" ng-click="fileContent.setTab('diff');">
 				Diff
 				<span ng-show="fileContent.diffLoading">
 					<i class="fa fa-spinner fa-spin"></i>

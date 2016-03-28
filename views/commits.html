@@ -9,9 +9,9 @@
 			<button type="submit" ng-show="commits.isLoading" ng-disabled="!isConnected"><i class="fa fa-spinner fa-spin"></i> Loading</button>
 		</form>
 	</div>
-	<div id="commits-list-grid-curtain" ng-show="commits.isLoading" style="height:{{panelHeight}}; width: {{commitsListPanelWidth}};"></div>
-	<div id="commits-list-grid-spinner" ng-show="commits.isLoading" style="height:{{panelHeight}}; width: {{commitsListPanelWidth}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
-	<div ui-grid="commits.commitsListGrid" id="commits-list-grid" style="height:{{panelHeight}}"></div>
+	<div id="commits-list-grid-curtain" ng-show="commits.isLoading" style="height:{{panelHeight}}px; width: {{commitsListPanelWidth}};"></div>
+	<div id="commits-list-grid-spinner" ng-show="commits.isLoading" style="height:{{panelHeight}}px; width: {{commitsListPanelWidth}}; line-height: {{panelHeight}}px;"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+	<div ui-grid="commits.commitsListGrid" id="commits-list-grid" style="height:{{panelHeight}}px;"></div>
 </div>
 <div id="modified-files-list">
 	<h2>
@@ -19,11 +19,11 @@
 	<button ng-show="!commits.creatingPatch" id="create-patch-btn" ng-click="commits.createPatch();"><i class="fa fa-code-fork"></i> Download patch</button>
 	<button ng-show="commits.creatingPatch" id="create-patch-btn" ng-click="commits.createPatch();" disabled><i class="fa fa-spinner fa-spin"></i> Download patch</button>
 	</h2>
-	<div ui-grid="modifiedFiles.filesGrid" id="files-grid" style="height:{{panelHeight}}"></div>
+	<div ui-grid="modifiedFiles.filesGrid" id="files-grid" style="height:{{panelHeight}}px;"></div>
 </div>
 <div id="modified-file-diff">
 	<h2>Diff</h2>
-	<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}; width: {{modifiedFilesPanelWidth}};"></div>
-	<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}; width: {{modifiedFilesPanelWidth}}; line-height: {{panelHeight}};"><i class="fa fa-spinner fa-spin"></i> Loading</div>
-	<div id="modified-file-content" hljs source="modifiedFiles.diffString" style="height:{{panelHeight}}"></div>
+	<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}px; width: {{modifiedFilesPanelWidth}};"></div>
+	<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}px; width: {{modifiedFilesPanelWidth}}; line-height: {{panelHeight}}px;"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+	<div id="modified-file-content" hljs source="modifiedFiles.diffString" style="height:{{panelHeight}}px;"></div>
 </div>

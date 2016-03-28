@@ -9,9 +9,9 @@
 				<button ng-show="filesTree.loadingTheTree" type="submit" disabled><i class="fa fa-spinner fa-spin"></i> Go</button>
 			</form>
 		</div>
-		<div ui-grid="filesTree.grid" style="height:{{panelHeight}}"></div>
+		<div ui-grid="filesTree.grid" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px"></div>
 	</div>
-	<div id="file-content-panel" class="panel" style="height:{{panelHeight}}">
+	<div id="file-content-panel" class="panel" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px">
 		<h2>Modified files list</h2>
 		<div id="file-content-toolbar" class="repo-browser-toolbar">
 			<a href="javascript:;" ng-class="{active: fileContent.isContentDisplayed}" ng-click="fileContent.setTab('content');">
@@ -27,19 +27,23 @@
 				</span>
 			</a>
 		</div>
-		<div ng-show="!filesTree.currentlySelectedNodeUrl" id="rb-file-content" style="height:{{panelHeight}}">
+		<div ng-show="!filesTree.currentlySelectedNodeUrl" id="rb-file-content" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px">
 			<div class="initial-rb-file-content-state">Select a file in the tree to view its content</div>
 		</div>
-		<div ng-show="filesTree.currentlySelectedNodeUrl && fileContent.content == ''" id="rb-file-content" style="height:{{panelHeight}}">
+		<div ng-show="filesTree.currentlySelectedNodeUrl && fileContent.content == ''" id="rb-file-content" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px">
 			<div class="initial-rb-file-content-state">Nothing...</div>
 		</div>
-		<div ng-show="fileContent.content" id="rb-file-content" hljs source="fileContent.content" style="height:{{panelHeight}}"></div>
+		
+		<div id="repo-browser-file-content-curtain" class="curtain" ng-show="fileContent.contentLoading" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px;"></div>
+		<div id="repo-browser-file-content-curtain-spinner" class="curtain-spinner" ng-show="fileContent.contentLoading" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px; line-height: {{panelHeight - repoBrowser.ui.toolbarHeight}}px;"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+		
+		<div ng-show="fileContent.content" id="rb-file-content" hljs source="fileContent.content" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px"></div>
 	</div>
-	<div id="file-revisions-panel" class="panel" style="height:{{panelHeight}}">
+	<div id="file-revisions-panel" class="panel" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px">
 		<h2>Revisions</h2>
 		<div class="repo-browser-toolbar">
 			<span ng-show="revisions.loadingRevisions"><i class="fa fa-spinner fa-spin"></i> Loading revisions</span>
 		</div>
-		<div ui-grid="revisions.grid" style="height:{{panelHeight}}"></div>
+		<div ui-grid="revisions.grid" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px"></div>
 	</div>
 </div>

@@ -80,7 +80,7 @@ MySVN.run(['$rootScope', function($rootScope) {
 	
 	$rootScope.fixHeights = function() {
 		var h = $rootScope.getWindowHeight();
-		$rootScope.panelHeight = (h - 130) + 'px';
+		$rootScope.panelHeight = (h - 130);
 	};
 	
 	window.addEventListener('resize', function() {

@@ -2,8 +2,12 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 	
 	$scope.repoBrowser = {
 		path: $scope.url,
-		revision: $scope.lastRevisionNumber
-	}
+		revision: $scope.lastRevisionNumber,
+		
+		ui: {
+			toolbarHeight: 35,
+		}
+	};
 	
 	$scope.filesTree = {
 		currentlySelectedNodeUrl: null,

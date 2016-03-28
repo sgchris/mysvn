@@ -27,6 +27,18 @@
 				</span>
 			</a>
 		</div>
+		
+		<!-- spinner -->
+		<div id="rb-file-content-curtain" class="curtain" 
+			ng-show="fileContent.contentLoading || fileContent.diffLoading" 
+			style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px;"></div>
+		<div id="rb-file-content-curtain-spinner" class="curtain-spinner" 
+			ng-show="fileContent.contentLoading || fileContent.diffLoading" 
+			style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px; line-height: {{panelHeight - repoBrowser.ui.toolbarHeight}}px;">
+			<i class="fa fa-spinner fa-spin"></i> Loading...
+		</div>
+		
+		<!-- initial panel state (text and grey background) -->
 		<div ng-show="!filesTree.currentlySelectedNodeUrl" id="rb-file-content" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px">
 			<div class="initial-rb-file-content-state">Select a file in the tree to view its content</div>
 		</div>
@@ -34,9 +46,7 @@
 			<div class="initial-rb-file-content-state">Nothing...</div>
 		</div>
 		
-		<div id="rb-file-content-curtain" class="curtain" ng-show="fileContent.contentLoading" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px;"></div>
-		<div id="rb-file-content-curtain-spinner" class="curtain-spinner" ng-show="fileContent.contentLoading" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px; line-height: {{panelHeight - repoBrowser.ui.toolbarHeight}}px;"><i class="fa fa-spinner fa-spin"></i> Loading</div>
-		
+		<!-- the content panel itself -->
 		<div ng-show="fileContent.content" id="rb-file-content" hljs source="fileContent.content" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px"></div>
 	</div>
 	<div id="file-revisions-panel" class="panel" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px">
@@ -44,6 +54,13 @@
 		<div class="repo-browser-toolbar">
 			<span ng-show="revisions.loadingRevisions"><i class="fa fa-spinner fa-spin"></i> Loading revisions</span>
 		</div>
+		
+		<!-- spinner -->
+		<div id="rb-file-revisions-curtain" class="curtain" ng-show="revisions.loadingRevisions" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{revisions.panelWidth}}px;"></div>
+		<div id="rb-file-revisions-curtain-spinner" class="curtain-spinner" ng-show="revisions.loadingRevisions" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{revisions.panelWidth}}px; line-height: {{panelHeight - repoBrowser.ui.toolbarHeight}}px;">
+			<i class="fa fa-spinner fa-spin"></i> Loading...
+		</div>
+		
 		<div ui-grid="revisions.grid" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px"></div>
 	</div>
 </div>

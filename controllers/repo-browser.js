@@ -108,6 +108,11 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		},
 
 		filesTreeClick: function(node) {
+			// skip if other node is currently opening
+			if ($scope.filesTree.currentlyOpeningNodeUrl && $scope.filesTree.currentlyOpeningNodeUrl != node.url) {
+				return;
+			}
+			
 			// if it's a file
 			if (node.type == 'file') {
 				
@@ -218,7 +223,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		},
 		
 		content: '',
-		panelWidth: 300,
+		panelWidth: 0,
 		
 		loadContent: function(successFn, failureFn, finallyFn) {
 			
@@ -291,7 +296,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		
 		init: function() {
 			var updatePanelWidth = function() {
-				$scope.fileContent.panelWidth = document.getElementById('rb-file-content').clientWidth;
+				$scope.fileContent.panelWidth = document.getElementById('file-content-panel').clientWidth;
 			};
 			
 			updatePanelWidth();
@@ -318,6 +323,8 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 			// load file content from revision
 			$scope.fileContent.loadContent();
 		},
+		
+		panelWidth: 0,
 		
 		loadRevisions: function(callbackFn, failureFn, finallyFn) {
 			$scope.revisions.loadingRevisions = true;
@@ -401,10 +408,23 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 			],
 			
 			data: []
+		},
+		
+		init: function() {
+			var updatePanelWidth = function() {
+				$scope.revisions.panelWidth = document.getElementById('file-revisions-panel').clientWidth;
+			};
+			
+			updatePanelWidth();
+			
+			window.addEventListener('resize', function() {
+				updatePanelWidth();
+			});
 		}
-	}
+	};
 	
 	$scope.fileContent.init();
+	$scope.revisions.init();
 	
 }]);
 

@@ -34,8 +34,8 @@
 			<div class="initial-rb-file-content-state">Nothing...</div>
 		</div>
 		
-		<div id="repo-browser-file-content-curtain" class="curtain" ng-show="fileContent.contentLoading" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px;"></div>
-		<div id="repo-browser-file-content-curtain-spinner" class="curtain-spinner" ng-show="fileContent.contentLoading" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px; line-height: {{panelHeight - repoBrowser.ui.toolbarHeight}}px;"><i class="fa fa-spinner fa-spin"></i> Loading</div>
+		<div id="rb-file-content-curtain" class="curtain" ng-show="fileContent.contentLoading" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px;"></div>
+		<div id="rb-file-content-curtain-spinner" class="curtain-spinner" ng-show="fileContent.contentLoading" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px; width: {{fileContent.panelWidth}}px; line-height: {{panelHeight - repoBrowser.ui.toolbarHeight}}px;"><i class="fa fa-spinner fa-spin"></i> Loading</div>
 		
 		<div ng-show="fileContent.content" id="rb-file-content" hljs source="fileContent.content" style="height:{{panelHeight - repoBrowser.ui.toolbarHeight}}px"></div>
 	</div>

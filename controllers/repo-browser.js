@@ -111,6 +111,11 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 			// if it's a file
 			if (node.type == 'file') {
 				
+				// skip if this is the currently selected file
+				if ($scope.filesTree.currentlySelectedNodeUrl == node.url) {
+					return;
+				}
+				
 				// mark the relevant flags
 				$scope.filesTree.currentlySelectedNodeUrl = node.url;
 				$scope.revisions.currentlySelectedRevision = null;
@@ -213,6 +218,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		},
 		
 		content: '',
+		panelWidth: 300,
 		
 		loadContent: function(successFn, failureFn, finallyFn) {
 			
@@ -284,9 +290,19 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 		},
 		
 		init: function() {
-			// ..
+			var updatePanelWidth = function() {
+				$scope.fileContent.panelWidth = document.getElementById('rb-file-content').clientWidth;
+			};
+			
+			updatePanelWidth();
+			
+			window.addEventListener('resize', function() {
+				updatePanelWidth();
+			});
 		}
 	};
+	
+	$scope.fileContent.init();
 	
 	
 	$scope.revisions = {
@@ -314,7 +330,7 @@ MySVN.controller('RepoBrowserController', ['$scope', '$http', '$sce', function($
 					url: $scope.filesTree.currentlySelectedNodeUrl,
 					login: $scope.login,
 					password: $scope.password,
-					limit: 200
+					limit: 20
 				}
 			}).then(function(res) {
 				if (!res || !res.data || !res.data.commits) {

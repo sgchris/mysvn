@@ -110,6 +110,21 @@ nav #connection-dialog-url {
 
 /* repo-browser box */
 
+.curtain {
+	background: #FFF;
+	opacity: 0.8;
+	
+	position : absolute;
+	z-index: 150;
+}
+.curtain-spinner {
+	position: absolute;
+	z-index: 160;
+	text-align: center;
+	opacity: 1;
+	color: #000;
+}
+
 #repo-browser-curtain {
 	background: #FFF;
 	opacity: 0.8;

@@ -222,6 +222,54 @@ class SvnClient {
 	}
 	
 	/**
+	 * @brief get the changes of the file per line (SVN blame)
+	 * @param string $path 
+	 * @param number $revision 
+	 * @return  
+	 */
+	public function getFileBlame($svnUrl, $revision = null) {
+		if (false === $this->_getSvnInfo()) {
+			$this->setLastError('Cannot get SVN info');
+			return false;
+		}
+		
+		if (is_null($revision)) {
+			$revision = $this->getLastRevisionNumber();
+		}
+		
+		$this->svnUrl = $svnUrl;
+		$cacheKey = 'file_blame_'.rawurlencode($svnUrl.'_'.$revision);
+		$result = '';
+		
+		if (!$this->cacheEnabled || null === ($result = $this->_getCacheObject()->retrieve($cacheKey))) {
+			// prepare and execute the command
+			$command = SVN_EXECUTABLE.' blame -v '.$this->_getAuthArguments().' '.$svnUrl.'@'.$revision;
+			$result = $this->_exec($command, $__asArray = false);
+			if ($result === false) {
+				$this->setLastError('cannot execute command');
+				return false;
+			}
+
+
+			// prettify the result
+			$this->_prettifyBlameResult($result);
+
+			// get array with the blame information
+			/*
+			$result = $this->_parseSvnBlame($result);
+			if (!$result) {
+				$this->setLastError('cannot parse SVN BLAME response');
+				return false;
+			}
+			*/
+			
+			//$this->_getCacheObject()->store($cacheKey, $result);
+		}
+		
+		return $result;
+	}
+	
+	/**
 	 * @brief diff two resources
 	 * @param string $path1 
 	 * @param int $revision1 - number or "HEAD"
@@ -384,6 +432,48 @@ class SvnClient {
 		}
 		
 		return $retVal;
+	}
+
+	/**
+	 * Remove the "pretty date" and the timezone from every line of `svn blame` output
+	 */
+	protected function _prettifyBlameResult(&$rawLines) {
+		// remove the pretty date and the timezone from every line
+		$rawLines = preg_replace('%\s+[\+\-]+\d+?\s+\(.*?\)%', '', $rawLines, $__limit = -1, $totalChanged);
+		return true;
+	}
+
+	/**
+	 * Parse the `svn blame` output
+	 */
+	protected function _parseSvnBlame($rawLines) {
+
+		// remove whitespaces
+		array_walk($rawLines, function(&$elem) {
+			$elem = trim($elem);
+		});
+
+		$parsedArr = array();
+		if (!empty($rawLines)) foreach ($rawLines as $line) {
+			$res = preg_match('%'. 
+				'\s*(?<revision>\d+)\s+'. // revision
+				'(?<author>.*?)\s+'. // author
+				'(?<rawdate>.*?)\s+\('. // date time timezone (e.g. "2016-04-24 14:02:01 +0200")
+				'(?<prettydate>.*?)\)\s*'. // pretty date (e.g. "Mon, 27 Jul 2015")
+				'(?<codeline>.*?)$'. // the code line
+				'%i', $line, $matches);
+
+			if ($res) {
+				$parsedArr[] = array(
+					'revision' => $matches['revision'],
+					'author' => $matches['author'],
+					'date' => $matches['date'],
+					'line' => $matches['codeline'],
+				);
+			}
+		}
+
+		return $parsedArr;
 	}
 
 	/**

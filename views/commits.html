@@ -22,7 +22,10 @@
 	<div ui-grid="modifiedFiles.filesGrid" id="files-grid" style="height:{{panelHeight}}px;"></div>
 </div>
 <div id="modified-file-diff">
-	<h2>Diff</h2>
+	<h2>
+	Diff
+	<button type="button" id="get-svn-blame" ng-disabled="!modifiedFiles.currentCommittedFilePath" ng-click="modifiedFiles.getBlame();" title="Check who had made changes to every line of code, and when"><i class="fa fa-code-fork"></i> Get File Blame</button>
+	</h2>
 	<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}px; width: {{modifiedFilesPanelWidth}};"></div>
 	<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}px; width: {{modifiedFilesPanelWidth}}; line-height: {{panelHeight}}px;"><i class="fa fa-spinner fa-spin"></i> Loading</div>
 	<div id="modified-file-content" hljs source="modifiedFiles.diffString" style="height:{{panelHeight}}px;"></div>

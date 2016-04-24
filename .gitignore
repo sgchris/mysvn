@@ -5,6 +5,10 @@
 *.phprj
 *.workspace
 
+.buildpath
+.project
+.settings
+
 # hide file with credentials
 assets/js/svn_cred.js
 

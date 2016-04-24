@@ -69,7 +69,7 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 				$scope.commits.isLoading = false;
 			});
 		},
-		
+
 		rowClicked: function(row) {
 			// set the selected commit
 			$scope.commits.currentCommitRevId = row.rev;
@@ -204,6 +204,54 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 				// stop the spinner
 				$scope.modifiedFiles.loadingFileDiff = false;
 			});
+		},
+		
+		getBlame: function() {
+			var filePath = $scope.modifiedFiles.currentCommittedFilePath;
+			var currentCommitRevId = $scope.commits.currentCommitRevId;
+			if (!filePath || !currentCommitRevId) {
+				return;
+			}
+
+			$scope.modifiedFiles.loadingFileDiff = true;
+			
+			// call web API
+			$http({
+				method: 'POST',
+				url: '/api/get_blame.php',
+				data: {
+					url: $scope.baseSvnUrl + filePath,
+					login: $scope.login,
+					password: $scope.password,
+					
+					revision: currentCommitRevId,
+				}
+			}).then(function(res) {
+				
+				if (!res || !res.data || !res.data.result) {
+					Notification.error('Error in diff response');
+					return false;
+				}
+				
+				if (res && res.data && res.data.result == 'error') {
+					Notification.error(res.data.error || 'Error getting the file blame');
+					return false;
+				}
+				
+				$scope.modifiedFiles.diffString = res.data.fileBlame;
+				
+				// callback parameter
+				if (typeof(callbackFn) == 'function') {
+					callbackFn();
+				}
+				
+			}, function() {
+				Notification.error('mysvn server error :(');
+			}).finally(function() {
+				// stop the spinner
+				$scope.modifiedFiles.loadingFileDiff = false;
+			});
+
 		},
 		
 		loadingFileDiff: false,

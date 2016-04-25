@@ -287,8 +287,7 @@ nav #connection-dialog-url {
 	margin-right: 0.5%;
 }
 
-#get-svn-blame,
-#modified-files-list #create-patch-btn {
+.modified-files-toolbar-button {
 	float: right;
 	margin-top: 1.2em;
 }

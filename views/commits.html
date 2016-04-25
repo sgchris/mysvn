@@ -16,15 +16,34 @@
 <div id="modified-files-list">
 	<h2>
 	Modified files list
-	<button ng-show="!commits.creatingPatch" id="create-patch-btn" ng-click="commits.createPatch();"><i class="fa fa-code-fork"></i> Download patch</button>
-	<button ng-show="commits.creatingPatch" id="create-patch-btn" ng-click="commits.createPatch();" disabled><i class="fa fa-spinner fa-spin"></i> Download patch</button>
+	<button ng-show="!commits.creatingPatch" id="create-patch-btn" class="modified-files-toolbar-button" ng-click="commits.createPatch();"><i class="fa fa-code-fork"></i> Download patch</button>
+	<button ng-show=" commits.creatingPatch" id="create-patch-btn" class="modified-files-toolbar-button" ng-click="commits.createPatch();" disabled><i class="fa fa-spinner fa-spin"></i> Download patch</button>
 	</h2>
 	<div ui-grid="modifiedFiles.filesGrid" id="files-grid" style="height:{{panelHeight}}px;"></div>
 </div>
 <div id="modified-file-diff">
 	<h2>
 	Diff
-	<button type="button" id="get-svn-blame" ng-disabled="!modifiedFiles.currentCommittedFilePath" ng-click="modifiedFiles.getBlame();" title="Check who had made changes to every line of code, and when"><i class="fa fa-code-fork"></i> Get File Blame</button>
+	<button type="button" id="get-svn-blame" class="modified-files-toolbar-button"
+		ng-show="modifiedFiles.currentState!='blame'" 
+		ng-disabled="!modifiedFiles.currentCommittedFilePath" 
+		ng-click="modifiedFiles.getBlame();" 
+		title="Check who had made changes to every line of code, and when">
+		<i class="fa fa-thumbs-o-down"></i> Get File Blame
+	</button>
+	<button type="button" id="get-diff-btn" class="modified-files-toolbar-button"
+		ng-show="modifiedFiles.currentState!='diff'" 
+		ng-disabled="!modifiedFiles.currentCommittedFilePath" 
+		ng-click="modifiedFiles.loadFileDiff();" 
+		title="Load DIFF of the file with previous version">
+		<i class="fa fa-clone"></i> Diff w/ prev version
+	</button>
+	<button type="button" id="download-file-result-btn" class="modified-files-toolbar-button"
+		ng-disabled="!modifiedFiles.diffString || !modifiedFiles.currentCommittedFilePath" 
+		ng-click="modifiedFiles.downloadFileResult();" 
+		title="Download the result">
+		<i class="fa fa-download"></i> Download
+	</button>
 	</h2>
 	<div id="modified-file-content-curtain" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}px; width: {{modifiedFilesPanelWidth}};"></div>
 	<div id="modified-file-content-spinner" ng-show="modifiedFiles.loadingFileDiff" style="height:{{panelHeight}}px; width: {{modifiedFilesPanelWidth}}; line-height: {{panelHeight}}px;"><i class="fa fa-spinner fa-spin"></i> Loading</div>

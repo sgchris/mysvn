@@ -1,6 +1,20 @@
 MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', '$timeout', '$sce', 'Notification', 
 	function($scope, $state, $http, $cookies, $timeout, $sce, Notification) {
-	
+
+	$scope.downloadContent = function(textContent, fileName) {
+		var dataUrl = 'data:text/plain;base64,' + btoa(textContent);
+		var link = document.createElement('a');
+		link.download = fileName;
+		link.href = dataUrl;
+		link.click();
+	};
+
+	// get only the file name from the full path
+	$scope.getBaseName = function(val) {
+		var lastSlashPos = Math.max(val.lastIndexOf('/'), val.lastIndexOf('\\'));
+		return (lastSlashPos >= 0) ? val.substr(lastSlashPos + 1) : val;
+	}
+
 	$scope.commits = {
 		commitsLimit: 30,
 		commitsTillRevision: 'HEAD',
@@ -162,10 +176,23 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 	
 	$scope.modifiedFiles = {
 		currentCommittedFilePath: null,
+		currentState: 'diff', // state of the right panel - "diff" or "blame"
 		
 		diffString: '',
 		
 		loadFileDiff: function(filePath, revisionNumber, callbackFn) {
+
+			// set defaults to the parameters
+			filePath = filePath || $scope.modifiedFiles.currentCommittedFilePath; 
+			revisionNumber = revisionNumber || $scope.commits.currentCommitRevId;
+			callbackFn = callbackFn || function(){};
+
+			// check if no currently selected file path
+			if (!filePath) {
+				return;
+			}
+
+			// start the spinner
 			$scope.modifiedFiles.loadingFileDiff = true;
 			
 			// call web API
@@ -191,7 +218,11 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 					return false;
 				}
 				
+				// set the content of the panel
 				$scope.modifiedFiles.diffString = res.data.diff;
+
+				// change the state of the panel
+				$scope.modifiedFiles.currentState = 'diff';
 				
 				// callback parameter
 				if (typeof(callbackFn) == 'function') {
@@ -238,7 +269,11 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 					return false;
 				}
 				
+				// set the content of the panel
 				$scope.modifiedFiles.diffString = res.data.fileBlame;
+				
+				// change the state of the panel
+				$scope.modifiedFiles.currentState = 'blame';
 				
 				// callback parameter
 				if (typeof(callbackFn) == 'function') {
@@ -252,6 +287,19 @@ MySVN.controller('CommitsController', ['$scope', '$state', '$http', '$cookies', 
 				$scope.modifiedFiles.loadingFileDiff = false;
 			});
 
+		},
+
+		downloadFileResult: function() {
+			if ($scope.modifiedFiles.diffString.length === 0) {
+				return;
+			}
+
+			// generate the file name
+			var fileName = $scope.getBaseName($scope.modifiedFiles.currentCommittedFilePath);
+			fileName+= '.' + $scope.modifiedFiles.currentState;
+
+			// preform the download
+			$scope.downloadContent($scope.modifiedFiles.diffString, fileName); 
 		},
 		
 		loadingFileDiff: false,

@@ -250,20 +250,13 @@ class SvnClient {
 				return false;
 			}
 
-
 			// prettify the result
-			$this->_prettifyBlameResult($result);
+			$prettifyResult = $this->_prettifyBlameResult($result);
 
-			// get array with the blame information
-			/*
-			$result = $this->_parseSvnBlame($result);
-			if (!$result) {
-				$this->setLastError('cannot parse SVN BLAME response');
-				return false;
+			// if the result was successful, store in the cache
+			if ($prettifyResult) {
+				$this->_getCacheObject()->store($cacheKey, $result);
 			}
-			*/
-			
-			//$this->_getCacheObject()->store($cacheKey, $result);
 		}
 		
 		return $result;
@@ -440,7 +433,7 @@ class SvnClient {
 	protected function _prettifyBlameResult(&$rawLines) {
 		// remove the pretty date and the timezone from every line
 		$rawLines = preg_replace('%\s+[\+\-]+\d+?\s+\(.*?\)%', '', $rawLines, $__limit = -1, $totalChanged);
-		return true;
+		return ($totalChanged && $totalChanged > 0);
 	}
 
 	/**
